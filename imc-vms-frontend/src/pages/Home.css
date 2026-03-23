@@ -1,0 +1,103 @@
+/* Landing page layout helpers (no Tailwind in this project). */
+
+.home-hero {
+  padding: 4rem 2rem;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  background: radial-gradient(circle at 100% 0%, var(--border-color) 0%, var(--bg-color) 55%);
+  overflow: hidden;
+}
+
+.home-hero h1 {
+  letter-spacing: -0.02em;
+}
+
+.home-hero p {
+  font-size: clamp(1.05rem, 1.3vw, 1.25rem);
+}
+
+.home-hero__wrap {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.home-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4rem;
+  align-items: center;
+}
+
+.home-trust {
+  padding: 4rem 2rem;
+  background-color: var(--bg-color);
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+  position: relative;
+}
+
+.home-trust__wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.home-trust__header {
+  max-width: 800px;
+  margin: 0 auto 3rem auto;
+}
+
+.home-trust__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+.home-trust__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2.5rem;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.home-trust__card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 900px) {
+  .home-hero {
+    padding: 3rem 1.25rem;
+    min-height: auto;
+  }
+
+  .home-hero__grid {
+    grid-template-columns: 1fr;
+    gap: 2.25rem;
+  }
+
+  .home-trust {
+    padding: 3rem 1.25rem;
+  }
+
+  .home-trust__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-trust__card {
+    transition: none;
+  }
+
+  .home-trust__card:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,331 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import './theme.css';
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.5;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color var(--transition-normal), color var(--transition-normal);
+    overflow-x: hidden;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* --- Auth (Login/Register) form primitives --- */
+.auth-form {
+    --auth-accent: var(--primary);
+}
+
+.auth-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--gray-600);
+    margin-bottom: 0.5rem;
+}
+
+.auth-labelRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+}
+
+.auth-link {
+    color: var(--auth-accent);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.auth-inputWrap {
+    position: relative;
+}
+
+.auth-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--gray-100);
+    color: var(--text-color);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.auth-input::placeholder {
+    color: var(--gray-400);
+}
+
+.auth-input:focus {
+    border-color: var(--auth-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--auth-accent) 22%, transparent);
+}
+
+.auth-iconLeft {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-400);
+}
+
+.auth-iconRightBtn {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--gray-400);
+    display: flex;
+    padding: 0;
+}
+
+.auth-submit {
+    width: 100%;
+    padding: 0.875rem;
+    border-radius: 8px;
+    background-color: var(--auth-accent);
+    color: var(--white);
+    border: 1px solid transparent;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: filter var(--transition-fast), opacity var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.auth-submit:hover {
+    filter: brightness(0.92);
+}
+
+.auth-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    filter: none;
+}
+
+.auth-helper {
+    color: var(--gray-600);
+}
+
+/* --- Public Navbar (responsive) --- */
+.site-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 2rem;
+    max-width: 100%;
+}
+
+.site-navbar__brand {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.site-navbar__brandLink {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.site-navbar__logo {
+    height: 48px;
+    flex: 0 0 auto;
+}
+
+.site-navbar__brandText {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.site-navbar__title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    word-break: break-word;
+}
+
+.site-navbar__subtitle {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    word-break: break-word;
+}
+
+.site-navbar__links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.site-navbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.site-navbar__divider {
+    width: 1px;
+    height: 24px;
+    margin: 0 0.5rem;
+}
+
+@media (max-width: 900px) {
+    .site-navbar {
+        padding: 0.75rem 1rem;
+        flex-wrap: wrap;
+    }
+
+    .site-navbar__links {
+        justify-content: flex-start;
+        gap: 0.9rem;
+    }
+}
+
+@media (max-width: 560px) {
+    .site-navbar__logo {
+        height: 40px;
+    }
+
+    .site-navbar__title {
+        font-size: 0.95rem;
+    }
+
+    .site-navbar__subtitle {
+        font-size: 0.7rem;
+    }
+
+    .site-navbar__divider {
+        display: none;
+    }
+}
+
+/* --- Buttons (project-wide) --- */
+/* Button.jsx renders className "btn btn-{variant}". Define those classes here. */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1;
+    user-select: none;
+    transition:
+        transform var(--transition-fast),
+        filter var(--transition-fast),
+        background-color var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--gov-primary) 20%, transparent);
+}
+
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    filter: none;
+}
+
+.btn-primary {
+    background-color: var(--gov-primary);
+    color: var(--white);
+    border: 1px solid transparent;
+}
+
+.btn-primary:hover {
+    filter: brightness(0.92);
+}
+
+.btn-secondary {
+    background-color: var(--gov-bg-card);
+    color: var(--gov-text-primary);
+    border: 1px solid var(--gov-border);
+}
+
+.btn-secondary:hover {
+    filter: brightness(0.98);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--gov-primary);
+    border: 1px solid var(--gov-primary);
+}
+
+.btn-outline:hover {
+    background-color: var(--gov-bg-main);
+}
+
+.btn-ghost {
+    background-color: transparent;
+    color: var(--gov-text-secondary);
+    border: 1px solid transparent;
+}
+
+.btn-ghost:hover {
+    background-color: var(--gov-bg-main);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gray-400);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-600);
+}

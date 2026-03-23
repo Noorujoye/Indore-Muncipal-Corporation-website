@@ -1,0 +1,487 @@
+{
+  "brand": {
+    "org": "INDORE MUNICIPAL CORPORATION",
+    "logoAlt": "IMC Logo",
+    "system": "Invoice Management System",
+    "systemUpper": "INVOICE MANAGEMENT SYSTEM",
+    "officialPortal": "OFFICIAL PORTAL"
+  },
+  "nav": {
+    "home": "HOME",
+    "about": "ABOUT",
+    "guidelines": "GUIDELINES",
+    "faq": "FAQ",
+    "contact": "CONTACT",
+    "login": "LOGIN"
+  },
+  "lang": {
+    "english": "English",
+    "hindi": "हिंदी"
+  },
+  "home": {
+    "heroTitle": "IMC Invoice Management",
+    "heroTitlePrefix": "IMC",
+    "heroTitleAccent": "Invoice Management",
+    "heroDesc": "Register as a vendor, submit invoices digitally, and track approvals end-to-end in a secure and transparent workflow.",
+    "ctaVendorRegistration": "Vendor Registration",
+    "trustHeadline": "Secure. Transparent. Efficient.",
+    "trustSecureTitle": "Secure",
+    "trustSecureDesc": "Enterprise-grade security",
+    "trustTransparentTitle": "Transparent",
+    "trustTransparentDesc": "Complete visibility",
+    "trustEfficientTitle": "Efficient",
+    "trustEfficientDesc": "Fast processing"
+  },
+  "footer": {
+    "copyright": "© {{year}} Indore Municipal Corporation. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "common": {
+    "close": "Close",
+    "back": "Back",
+    "cancel": "Cancel",
+    "goBack": "Go Back",
+    "logout": "Logout",
+    "goToLogin": "Go to Login",
+    "backToHome": "Back to Home",
+    "requestSubmittedTitle": "Request Submitted",
+    "requestSubmitted": "Request is submitted.",
+    "registrationUnderReview": "Your registration is under review. You will receive login credentials via email after approval."
+  },
+  "vendorLayout": {
+    "vendor": "Vendor",
+    "vendorRole": "Vendor",
+    "nav": {
+      "dashboard": "Dashboard",
+      "myInvoices": "My Invoices",
+      "createInvoice": "Create Invoice",
+      "helpdesk": "Helpdesk"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "viewAll": "View All Notifications"
+    },
+    "profile": {
+      "myProfile": "My Profile"
+    }
+  },
+  "vendorDashboard": {
+    "loading": "Loading Dashboard...",
+    "errorLoading": "Error loading data",
+    "title": "Vendor Dashboard",
+    "welcomeBack": "Welcome back.",
+    "welcomeBackName": "Welcome back, {{name}}.",
+    "kpi": {
+      "totalInvoices": "Total Invoices",
+      "inProcess": "In Process",
+      "paid": "Paid",
+      "rejected": "Rejected"
+    },
+    "invoicePaymentPipeline": "Invoice Payment Pipeline",
+    "valueInStage": "Value in Stage",
+    "pipeline": {
+      "submitted": "Submitted",
+      "inScrutiny": "In Scrutiny",
+      "verified": "Verified",
+      "approved": "Approved",
+      "paid": "Paid"
+    },
+    "actionRequiredCount": "Action Required ({{count}})",
+    "invoiceNumber": "Invoice #{{id}}",
+    "wasReturned": "was returned",
+    "reason": "Reason",
+    "fixNow": "Fix Now"
+  },
+  "myInvoices": {
+    "loading": "Loading Invoices...",
+    "title": "My Invoices",
+    "subtitle": "Manage, track, and submit your invoices to IMC.",
+    "createNew": "Create New Invoice",
+    "searchPlaceholder": "Search by Invoice # or Tender Ref...",
+    "filter": {
+      "allStatuses": "All Statuses"
+    },
+    "table": {
+      "invoiceNumber": "INVOICE #",
+      "tenderRef": "TENDER REF",
+      "amount": "AMOUNT (₹)",
+      "status": "STATUS",
+      "date": "DATE",
+      "action": "ACTION"
+    },
+    "view": "View",
+    "empty": {
+      "title": "No invoices found",
+      "subtitle": "Try adjusting your search or filters."
+    }
+  },
+  "createInvoice": {
+    "title": "Create New Invoice",
+    "errorDefault": "Invoice submission failed.",
+    "successTitle": "Invoice Submitted!",
+    "successMessage": "Your invoice {{invoiceNumber}} has been successfully uploaded and forwarded for scrutiny.",
+    "returnToList": "Return to List",
+    "createAnother": "Create Another",
+    "fields": {
+      "vendorInvoiceNumber": "Vendor Invoice Number",
+      "tenderRef": "Tender Reference Number",
+      "invoiceDate": "Invoice Date",
+      "baseAmount": "Base Amount (₹)",
+      "workDescription": "Work Description",
+      "uploadInvoicePdf": "Upload Invoice PDF"
+    },
+    "placeholders": {
+      "vendorInvoiceNumber": "e.g. INV-2025-001",
+      "tenderRef": "Enter Tender Ref",
+      "baseAmount": "0.00",
+      "workDescription": "Brief details about the work completion..."
+    },
+    "calculationSummary": "Calculation Summary (18% GST)",
+    "summary": {
+      "baseAmount": "Base Amount:",
+      "gst": "GST (18%):",
+      "totalPayable": "Total Payable:"
+    },
+    "upload": {
+      "clickToUpload": "Click to upload file",
+      "pdfOnlyMax": "PDF only, max 5MB",
+      "fileSizeMb": "{{size}} MB"
+    },
+    "submitting": "Submitting...",
+    "submit": "Submit Invoice"
+  },
+  "helpdesk": {
+    "loading": "Loading Helpdesk...",
+    "title": "Vendor Helpdesk",
+    "subtitle": "Raise queries and track support requests.",
+    "raiseNewTicket": "Raise New Ticket",
+    "searchPlaceholder": "Search ticket ID or subject...",
+    "filterStatus": "Filter Status",
+    "table": {
+      "subject": "Subject",
+      "relatedInvoice": "Related Invoice",
+      "date": "Date",
+      "status": "Status"
+    },
+    "empty": "No tickets found. Need help? Raise a new ticket."
+  },
+  "invoiceDetail": {
+    "loading": "Loading Invoice Details...",
+    "notFound": "Invoice not found",
+    "backToInvoices": "Back to Invoices",
+    "tenderRef": "Tender Ref",
+    "viewInvoice": "View Invoice",
+    "downloadDetails": "Download Details",
+    "downloadFailed": "Download failed."
+  },
+  "vendorProfile": {
+    "title": "Company Profile",
+    "subtitle": "Manage your account settings and view compliance details.",
+    "profileImageAlt": "Profile",
+    "photoUpdateAlert": "Photo update would open file picker here",
+    "requestProfileUpdate": "Request Profile Update",
+    "security": "Security",
+    "complianceDocuments": "Compliance Documents",
+    "complianceNote": "Need to update these? These are core identity fields. Please visit the IMC Office or raise a ticket for re-verification.",
+    "financialDetails": "Financial Details",
+    "fields": {
+      "pan": "PAN Number",
+      "gstin": "GSTIN",
+      "aadhaarLinked": "Aadhaar Linked",
+      "bankAccountNumber": "Bank Account Number",
+      "ifscCode": "IFSC Code"
+    },
+    "password": {
+      "change": "Change Password",
+      "current": "Current Password",
+      "new": "New Password",
+      "confirm": "Confirm New Password",
+      "update": "Update Password",
+      "success": "Password Updated Successfully",
+      "mismatch": "New passwords do not match!"
+    },
+    "request": {
+      "note": "Core identity fields (Name, PAN, GST) require verification. Submitting this request will create a Helpdesk ticket for the Creator to review.",
+      "reasonLabel": "Reason for Change",
+      "selectReason": "Select Reason",
+      "detailsLabel": "New Details / Comments",
+      "detailsPlaceholder": "Please describe the changes you need...",
+      "submit": "Submit Request",
+      "successTitle": "Request Sent to Administrator",
+      "successSubtitle": "Ticket #REQ-2025-999 created.",
+      "reasons": {
+        "incorrectAddress": "Incorrect Address",
+        "updatePhoneEmail": "Update Phone/Email",
+        "nameChangeLegal": "Name Change (Legal)",
+        "bankDetailsUpdate": "Bank Details Update",
+        "other": "Other"
+      }
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidPan": "Invalid PAN format (e.g., ABCDE1234F)",
+    "invalidGstin": "Invalid GSTIN format",
+    "invalidEmail": "Invalid email address",
+    "invalidMobile": "Invalid mobile number (10 digits starting with 6-9)",
+    "invalidAadhaar": "Invalid Aadhaar (12 digits)",
+    "invalidIfsc": "Invalid IFSC Code",
+    "invalidPincode": "Invalid Pincode",
+    "invalidAccountNumber": "Invalid Account Number (9-18 digits)"
+  },
+  "vendorReg": {
+    "title": "Vendor Registration",
+    "subtitle": "Register your business with Indore Municipal Corporation",
+    "ssl": "256-bit SSL Secure Connection",
+    "step1": "Business Identity",
+    "step2": "Contact & Responsibility",
+    "step3": "Bank Details & Review",
+    "nextStep": "Next Step",
+    "submitApplication": "Submit Application",
+    "registrationFailedTitle": "Registration Failed",
+    "registrationFailedDefault": "Registration failed. Please try again.",
+    "firmType": {
+      "proprietorship": "Proprietorship",
+      "partnership": "Partnership",
+      "privateLimited": "Private Limited",
+      "publicLimited": "Public Limited",
+      "llp": "LLP",
+      "jointVenture": "Joint Venture"
+    },
+    "business": {
+      "firmName": "Full Legal Firm Name",
+      "firmNamePh": "Enter registered firm name",
+      "firmType": "Firm Constitution Type",
+      "email": "Official Business Email",
+      "emailPh": "vendors@firm.com",
+      "pan": "Permanent Account Number (PAN)",
+      "panPh": "ABCDE1234F",
+      "gstin": "GST Registration Number",
+      "gstinPh": "22AAAAA0000A1Z5",
+      "logo": "Profile / Firm Logo",
+      "logoHelp": "Upload a clear photo or logo (JPG/PNG, Max 2MB)"
+    },
+    "contact": {
+      "authorizedTitle": "Authorized Person Details",
+      "fullName": "Full Name",
+      "fullNamePh": "Name as per Aadhaar",
+      "designation": "Designation",
+      "designationPh": "e.g. Director, Partner, Proprietor",
+      "dob": "Date of Birth",
+      "mobile": "Mobile Number",
+      "mobilePh": "10-digit mobile number",
+      "aadhaar": "Aadhaar Number",
+      "aadhaarPh": "12-digit Aadhaar number",
+      "addressTitle": "Registered Business Address",
+      "addressLine": "Address Line 1",
+      "addressLinePh": "Building NO., Street Name, Area",
+      "city": "City",
+      "district": "District",
+      "state": "State",
+      "pincode": "Pincode",
+      "pincodePh": "452001"
+    },
+    "bank": {
+      "securityTitle": "Bank Details Security",
+      "securityText": "Please ensure the bank account belongs to the business entity. This account will be used for all future payments.",
+      "ifsc": "Bank IFSC Code",
+      "ifscPh": "SBIN0001234",
+      "accountNumber": "Account Number",
+      "accountNumberPh": "Enter Account Number"
+    },
+    "review": {
+      "title": "Application Review",
+      "businessTitle": "Business Identity",
+      "contactTitle": "Contact & Address",
+      "firmName": "Firm Name",
+      "firmType": "Firm Type",
+      "email": "Email",
+      "pan": "PAN",
+      "gstin": "GSTIN",
+      "authorizedPerson": "Authorized Person",
+      "designation": "Designation",
+      "mobile": "Mobile",
+      "address": "Address",
+      "aadhaar": "Aadhaar"
+    }
+  },
+  "auth": {
+    "vendorPortal": "Vendor Portal",
+    "officialPortal": "Official Portal",
+    "welcomeBack": "Welcome Back",
+    "vendorSubtitle": "Please sign in to your vendor account",
+    "officialAccess": "Official Access",
+    "officialSubtitle": "Secure login for IMC department officials",
+    "emailAddress": "Email Address",
+    "email": "Email",
+    "vendorEmailPlaceholder": "name@company.com",
+    "imcEmailPlaceholder": "name@imc.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "forgotId": "Forgot ID?",
+    "forgotPassword": "Forgot Password?",
+    "signingIn": "Signing in...",
+    "signIn": "Sign In",
+    "dontHaveAccount": "Don't have an account?",
+    "registerBusiness": "Register your business",
+    "authenticating": "Authenticating...",
+    "secureLogin": "Secure Login",
+    "restrictedAccess": "Restricted Access. Unauthorized attempts are logged.",
+    "loginToSystem": "Login to IMC System",
+    "selectRole": "Select your role to continue",
+    "vendorLogin": "Vendor Login",
+    "vendorLoginDesc": "For registered vendors to submit and track invoices.",
+    "continueVendor": "Continue as Vendor",
+    "imcUserLogin": "IMC User Login",
+    "imcUserLoginDesc": "For authorized IMC officials only.",
+    "continueImc": "Continue as IMC User",
+    "policyNote": "By logging in, you agree to the IMC Vendor Management System policies.",
+    "vendorOnlyError": "This account is not a Vendor. Please use IMC User Login.",
+    "imcOnlyError": "This account is not an IMC user. Please use Vendor Login.",
+    "unauthorizedRole": "Unauthorized role. Please contact administrator.",
+    "loginFailed": "Login failed. Please check your credentials."
+  },
+  "public": {
+    "aboutTitle": "About IMC Invoice Management System",
+    "aboutSubtitle": "A secure portal for vendor onboarding, invoice submission, and invoice processing workflows within Indore Municipal Corporation.",
+    "purpose": "Purpose",
+    "purposeText": "This portal standardizes invoice handling across IMC and its vendors, improves traceability, and enables role-based scrutiny and approvals.",
+    "whoCanUse": "Who can use it",
+    "whoVendor": "Vendors registered with IMC for uploading invoices and tracking status.",
+    "whoOfficials": "IMC Officials with assigned roles for review, verification, approval, and reporting.",
+    "included": "What’s included",
+    "included1": "Vendor registration and profile verification.",
+    "included2": "Invoice creation and document upload.",
+    "included3": "Role-based workflow: scrutiny → verification → approval.",
+    "included4": "Invoice status tracking with audit trail.",
+    "included5": "Helpdesk support for issue reporting (after login).",
+    "scopeNotes": "Scope notes",
+    "scopeNotesText": "This portal is intended for invoice processing and related compliance checks. Payment execution timelines and banking operations follow IMC finance procedures and may occur outside the portal.",
+
+    "contactTitle": "Contact & Support",
+    "contactSubtitle": "Use the helpdesk for ticket-based support and clear escalation. Keep invoice references handy when raising a request.",
+    "primaryChannel": "Primary support channel (recommended)",
+    "primaryChannelText": "After login, submit a ticket through the in-portal helpdesk so your request is traceable.",
+    "vendorLoginHelpdesk": "Vendor Login → Helpdesk",
+    "imcLogin": "IMC Login",
+    "includeLine": "Include: Vendor ID, Invoice ID, Tender/Work Order reference, and screenshots (if applicable).",
+    "escalation": "Escalation",
+    "esc1": "Level 1: Helpdesk ticket (portal).",
+    "esc2": "Level 2: Department/section follow-up referencing your ticket number.",
+    "esc3": "Level 3: Formal escalation as per IMC internal procedures.",
+    "contactNote": "Note: Update this page with official email/phone contacts once finalized for your deployment.",
+    "ticketReasons": "Common reasons for support tickets",
+    "ticket1": "Unable to login / role access issues.",
+    "ticket2": "Invoice upload errors or document validation.",
+    "ticket3": "Status clarification (Returned / Rejected / Approved).",
+    "ticket4": "Mismatch in invoice totals, GST details, or bank information.",
+
+    "guidelinesTitle": "Vendor Guidelines (Public)",
+    "guidelinesSubtitle": "Basic submission rules and document requirements for vendors. Specific tender/work-order terms always take priority.",
+    "docReq": "Document requirements",
+    "doc1": "Signed invoice (as applicable) with correct invoice number and date.",
+    "doc2": "Work order / contract / tender reference details.",
+    "doc3": "GST details and supporting certificates (where applicable).",
+    "doc4": "PAN and bank details for payment processing.",
+    "doc5": "Completion certificates / measurement books / delivery challans (as applicable).",
+    "rules": "Invoice submission rules",
+    "rule1": "Enter invoice amount and tax details exactly as per the uploaded invoice document.",
+    "rule2": "Ensure vendor name, GSTIN, and bank details match your registered profile.",
+    "rule3": "Submit one invoice per unique invoice number; duplicates may be rejected.",
+    "rule4": "Upload clear, readable documents; blurred or incomplete scans may be returned for correction.",
+    "fileTypes": "Accepted file types (typical)",
+    "fileTypesText": "Upload formats depend on portal configuration. Prefer PDF for invoices. If images are allowed, use high-resolution scans.",
+    "statusMeanings": "Status meanings",
+    "stPending": "Pending: Under scrutiny/review at an IMC processing stage.",
+    "stReturned": "Returned for correction: Action required from vendor (or creator) to fix issues and resubmit.",
+    "stRejected": "Rejected: Invoice is not acceptable as submitted; review comments and raise a helpdesk ticket if needed.",
+    "stApproved": "Approved: Approved for next finance/payment procedure as per IMC process.",
+    "compliance": "Compliance reminder",
+    "complianceText": "Submissions must comply with applicable laws, IMC financial rules, and the terms of your work order/contract. Misrepresentation or incorrect documentation may lead to rejection and further action as per policy.",
+
+    "faqTitle": "Frequently Asked Questions",
+    "faqSubtitle": "Quick answers for common vendor queries about invoices, documents, and status tracking.",
+
+    "privacyTitle": "Privacy Policy",
+    "termsTitle": "Terms of Service",
+    "effective": "Effective date: 25 February 2026.",
+    "basicLegalNote": "This is a basic policy intended for public portals and should be reviewed by IMC legal/compliance.",
+    "basicTermsNote": "This is a basic terms page and should be reviewed by IMC legal/compliance for production deployment."
+  },
+  "privacy": {
+    "infoCollectTitle": "Information we collect",
+    "infoCollect1": "Account and profile details (vendor identity, contact details, bank details).",
+    "infoCollect2": "Invoice data (invoice numbers, amounts, dates, references).",
+    "infoCollect3": "Uploaded documents supporting invoice processing and compliance.",
+    "infoCollect4": "Usage/security logs (login events, access records, audit trails).",
+
+    "useTitle": "How we use information",
+    "use1": "To onboard vendors and maintain verified vendor records.",
+    "use2": "To process invoices through scrutiny, verification, and approval workflows.",
+    "use3": "To communicate portal notifications and support responses.",
+    "use4": "To detect and prevent fraud, abuse, or unauthorized access.",
+
+    "sharingTitle": "Sharing and disclosure",
+    "sharingText": "Data may be shared with authorized IMC departments and service providers strictly for operating the portal, compliance, audits, and statutory requirements. Disclosure may occur when required by law or court orders.",
+
+    "cookiesTitle": "Cookies and sessions",
+    "cookiesText": "The portal may use cookies or similar technologies to maintain login sessions and security controls. Disabling cookies may prevent you from using protected features.",
+
+    "retentionTitle": "Retention and security",
+    "retentionText": "Information is retained as required for invoice processing, audits, and legal compliance. Reasonable technical and organizational measures are applied to protect data, but no system can be guaranteed 100% secure.",
+
+    "contactTitle": "Contact",
+    "contactText": "For privacy-related requests, use the portal helpdesk after login or refer to the Contact & Support page for escalation."
+  },
+  "terms": {
+    "acceptTitle": "Acceptance of terms",
+    "acceptText": "By accessing or using this portal, you agree to comply with these terms and all applicable laws and IMC procedures.",
+
+    "responsTitle": "User responsibilities",
+    "respons1": "Provide accurate information and maintain updated profile details.",
+    "respons2": "Upload authentic documents and correct invoice information.",
+    "respons3": "Keep credentials confidential and report suspected compromise promptly.",
+    "respons4": "Use the portal only for lawful and authorized purposes.",
+
+    "rightsTitle": "IMC rights and enforcement",
+    "rightsText": "IMC may suspend or restrict access for security, compliance, maintenance, or suspected misuse. Actions may be taken as per applicable policies and legal requirements.",
+
+    "availabilityTitle": "Service availability",
+    "availabilityText": "The portal is provided on an “as available” basis. IMC may modify, suspend, or discontinue features with or without notice for operational reasons.",
+
+    "liabilityTitle": "Limitation of liability",
+    "liabilityText": "To the extent permitted by law, IMC is not liable for indirect or consequential losses arising from use of the portal. This does not limit any rights that cannot be excluded under applicable law.",
+
+    "governingTitle": "Governing rules",
+    "governingText": "Use of the portal is governed by applicable Indian laws and IMC procedures, and disputes are subject to jurisdiction as per law."
+  },
+  "faq": {
+    "q1": "What file type should I upload for the invoice?",
+    "a1": "Prefer a clear PDF of the signed invoice. If image uploads are enabled, use high-resolution scans and ensure all pages are readable.",
+    "q2": "What should be included in the invoice format?",
+    "a2": "Invoice number & date, vendor name and address, GSTIN (if applicable), work order/tender reference, item/service details, taxable value, taxes, and final payable amount.",
+    "q3": "Why was my invoice “Returned for correction”?",
+    "a3": "Usually because a document is missing, values don’t match the uploaded invoice, or details like GST/bank info need correction. Check the remarks and resubmit after fixing.",
+    "q4": "What does “Pending” mean?",
+    "a4": "Your invoice is in the IMC processing workflow (scrutiny/verification/approval). You can track status changes in the portal.",
+    "q5": "What does “Rejected” mean?",
+    "a5": "The invoice was not accepted as submitted. Review the rejection remarks. If you believe it is incorrect, raise a helpdesk ticket with the invoice reference.",
+    "q6": "How do I get support?",
+    "a6": "Login and use the in-portal Helpdesk for ticket-based support and escalation. Keep your Vendor ID and Invoice ID ready."
+  },
+  "status": {
+    "APPROVED": "Approved",
+    "PENDING": "Pending",
+    "REJECTED": "Rejected",
+    "PAID": "Paid",
+    "DRAFT": "Draft",
+    "RETURNED": "Returned",
+    "READY_FOR_PAYMENT": "Ready for Payment",
+    "VERIFIED": "Verified",
+    "CREATOR_PENDING": "Creator Pending",
+    "VERIFIER_PENDING": "Verifier Pending",
+    "APPROVER_PENDING": "Approver Pending",
+    "UNKNOWN": "Unknown"
+  }
+}

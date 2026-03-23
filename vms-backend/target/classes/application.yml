@@ -1,0 +1,107 @@
+server:
+  # Some environments inject a PORT env var.
+  # Prefer PORT when present, fallback to SERVER_PORT, then 8080.
+  port: ${PORT:${SERVER_PORT:8080}}
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    # Keep mail logs at INFO by default (production-safe).
+    # Enable deep mail debugging only in the `dev` profile (see application-dev.yml).
+    org.springframework.mail: INFO
+    org.springframework.mail.javamail: INFO
+    jakarta.mail: INFO
+    com.sun.mail: INFO
+
+spring:
+  servlet:
+    multipart:
+      # Default is ~1MB; vendor logos often exceed that.
+      # Can be overridden via env var.
+      max-file-size: ${FILE_MAX_SIZE:5MB}
+      max-request-size: ${FILE_MAX_SIZE:5MB}
+  config:
+    # Local developer convenience: allow MAIL_*/DB_* values from a .env file.
+    # The file is optional and is already gitignored.
+    # NOTE: Spring loads .properties files most reliably, so prefer creating `.env.properties`.
+    import: >-
+      optional:file:./.env.properties,
+      optional:file:./.env,
+      optional:file:./vms-backend/.env.properties,
+      optional:file:./vms-backend/.env
+  application:
+    name: vms-backend
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/imc_vms?stringtype=unspecified}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  mail:
+    # Prefer explicit MAIL_HOST in production.
+    # Default to Brevo relay for local/dev convenience.
+    host: ${MAIL_HOST:smtp-relay.brevo.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS_ENABLE:true}
+
+          # Reasonable timeouts (ms) to avoid hanging when SMTP is blocked.
+          connectiontimeout: ${MAIL_SMTP_CONNECTION_TIMEOUT_MS:5000}
+          timeout: ${MAIL_SMTP_TIMEOUT_MS:5000}
+          writetimeout: ${MAIL_SMTP_WRITE_TIMEOUT_MS:5000}
+
+  mvc:
+    log-request-details: true
+
+file:
+  upload-dir: uploads
+  max-size: 5MB
+
+app:
+  frontend:
+    # Used to build password set/reset links in transactional emails.
+    # In production set FRONTEND_BASE_URL to your deployed SPA origin.
+    base-url: ${FRONTEND_BASE_URL:http://localhost:5173}
+
+  mail:
+    # Sender address shown to recipients. For Brevo this must be a verified sender.
+    from: ${MAIL_FROM:}
+  cors:
+    # Dev-friendly default. In production set this to your exact frontend origin(s), comma-separated.
+    # Example: CORS_ALLOWED_ORIGIN_PATTERNS=https://vms.example.com
+    allowed-origin-patterns: ${CORS_ALLOWED_ORIGIN_PATTERNS:http://localhost:*}
+
+  jwt:
+    # REQUIRED in production. Use a strong random value (>= 32 chars).
+    secret: ${JWT_SECRET:CHANGE_ME_DEV_ONLY__SET_JWT_SECRET_IN_ENV}
+    accessTokenExpirationMs: ${JWT_ACCESS_TOKEN_EXP_MS:900000}
+    refreshTokenExpirationMs: ${JWT_REFRESH_TOKEN_EXP_MS:604800000}
+
+  auth:
+    cookie:
+      # In production behind HTTPS set AUTH_COOKIE_SECURE=true
+      secure: ${AUTH_COOKIE_SECURE:false}
+      # Lax blocks most CSRF while keeping SPA working
+      sameSite: ${AUTH_COOKIE_SAMESITE:Lax}
+
+    password-token:
+      # Minutes
+      set-password-ttl-minutes: ${AUTH_SET_PASSWORD_TTL_MINUTES:10080}
+      reset-password-ttl-minutes: ${AUTH_RESET_PASSWORD_TTL_MINUTES:60}
