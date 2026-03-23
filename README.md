@@ -79,7 +79,6 @@ The dev server URL is printed in the terminal (typically `http://localhost:5173`
 
 - Frontend: `imc-vms-frontend/README.md`
 - Backend: `vms-backend/README.md`
-- Database notes: `vms-backend/DATABASE.md`
 
 ## Repository hygiene
 
