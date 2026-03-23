@@ -43,18 +43,6 @@ At a high level:
 - Java 21
 - PostgreSQL
 
-### Backend (Spring Boot)
-
-PowerShell example:
-
-```powershell
-$env:DB_URL="jdbc:postgresql://localhost:5432/imc_vms?stringtype=unspecified"
-$env:DB_USERNAME="postgres"
-$env:DB_PASSWORD="your_password"
-$env:JWT_SECRET="replace_with_a_long_random_secret"
-$env:CORS_ALLOWED_ORIGIN_PATTERNS="http://localhost:*"
-```
-
 Run the API:
 
 ```powershell
