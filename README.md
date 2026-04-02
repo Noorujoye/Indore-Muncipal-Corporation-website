@@ -3,6 +3,14 @@
 This repository contains a full-stack Vendor Management System designed around a municipality-style approval workflow.
 It includes a web frontend (vendors + IMC roles) and a Spring Boot backend API.
 
+<p align="center">
+  <img src="assets/landingEng.png" alt="Project Screenshot 1" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/LandingHin.png" alt="Project Screenshot 2" width="100%">
+</p>
+
 ## About the project
 
 The goal of this system is to model a real-world vendor onboarding and invoice processing pipeline, where multiple internal roles review and take decisions before a vendor is approved or an invoice is paid.
