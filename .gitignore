@@ -1,0 +1,95 @@
+# ==============================================================================
+# Git Ignore for IMC Vendor Management System (VMS)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Environment & Credentials (NEVER COMMIT SECRETS)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+*.env
+*.env.*
+!.env.example
+!**/.env.example
+*.properties.local
+*.env.properties
+
+# ------------------------------------------------------------------------------
+# 2. Private Developer / Personal Directories
+# ------------------------------------------------------------------------------
+OnlyForMe/
+**/OnlyForMe/
+private/
+**/private/
+
+# ------------------------------------------------------------------------------
+# 3. Build & Dependency Directories
+# ------------------------------------------------------------------------------
+# Frontend dependencies & build output
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Backend build outputs & bytecode
+target/
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# ------------------------------------------------------------------------------
+# 4. Runtime Data & Uploads
+# ------------------------------------------------------------------------------
+uploads/
+**/uploads/
+scratch/
+**/scratch/
+
+# ------------------------------------------------------------------------------
+# 5. IDE, Editors & Local Tooling
+# ------------------------------------------------------------------------------
+# IntelliJ IDEA
+.idea/
+**/.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# Visual Studio Code
+.vscode/
+**/.vscode/
+*.code-workspace
+
+# Database GUI tools & local query history
+.dbeaver/
+**/.dbeaver/
+database/
+**/database/
+*.db
+*.sqlite
+*.sql
+setup_database.sql
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# GitHub modernize migration hooks
+.github/modernize/

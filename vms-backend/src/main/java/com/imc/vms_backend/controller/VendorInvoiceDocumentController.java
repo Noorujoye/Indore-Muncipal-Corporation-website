@@ -70,7 +70,6 @@ public class VendorInvoiceDocumentController {
                                 .build();
 
                 documentRepository.save(doc);
-
                 return ResponseEntity.ok("Document uploaded successfully");
         }
 }

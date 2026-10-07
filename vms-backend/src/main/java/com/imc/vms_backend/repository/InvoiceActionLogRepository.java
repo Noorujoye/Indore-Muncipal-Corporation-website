@@ -12,6 +12,8 @@ public interface InvoiceActionLogRepository
 
     List<InvoiceActionLog> findByInvoiceIdOrderByActionTimestampAsc(Long invoiceId);
 
+    List<InvoiceActionLog> findByActionBy_EmailOrderByActionTimestampDesc(String email);
+
     long countByActionBy_EmailAndToStatusAndActionTimestampBetween(
             String email,
             Invoice.InvoiceStatus toStatus,

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
@@ -186,9 +186,10 @@ const VendorRegistration = () => {
                     msg = firstError;
                 }
             }
+            const isUnderReview = typeof msg === 'string' && msg.toLowerCase().includes('under review');
             setBanner({
-                variant: 'error',
-                title: t('vendorReg.registrationFailedTitle'),
+                variant: isUnderReview ? 'warning' : 'error',
+                title: isUnderReview ? 'Registration Under Review' : t('vendorReg.registrationFailedTitle'),
                 message: msg
             });
         } finally {
@@ -206,7 +207,10 @@ const VendorRegistration = () => {
 
             <Modal
                 isOpen={successModalOpen}
-                onClose={() => setSuccessModalOpen(false)}
+                onClose={() => {
+                    setSuccessModalOpen(false);
+                    navigate('/');
+                }}
                 title={t('common.requestSubmittedTitle')}
             >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -219,7 +223,10 @@ const VendorRegistration = () => {
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
                         <button
                             type="button"
-                            onClick={() => setSuccessModalOpen(false)}
+                            onClick={() => {
+                                setSuccessModalOpen(false);
+                                navigate('/');
+                            }}
                             style={{
                                 padding: '0.6rem 1rem',
                                 borderRadius: '8px',

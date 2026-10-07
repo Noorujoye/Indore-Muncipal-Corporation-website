@@ -74,12 +74,33 @@ public class DocumentQueryController {
                 }
 
         File file = new File(doc.getFilePath());
+        if (!file.exists() || !file.isFile()) {
+            throw new ApiException("Document file not found on server disk");
+        }
+
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        if (doc.getFileType() != null && !doc.getFileType().trim().isEmpty()) {
+            try {
+                mediaType = MediaType.parseMediaType(doc.getFileType().trim());
+            } catch (Exception ignored) {
+                mediaType = MediaType.APPLICATION_OCTET_STREAM;
+            }
+        }
+
+        String fileName = (doc.getFileName() != null && !doc.getFileName().trim().isEmpty())
+                ? doc.getFileName().trim()
+                : ("document_" + documentId);
+
+        ContentDisposition disposition = ContentDisposition.attachment()
+                .filename(fileName, java.nio.charset.StandardCharsets.UTF_8)
+                .build();
+
         Resource resource = new FileSystemResource(file);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + doc.getFileName() + "\"")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition.toString())
+                .contentType(mediaType)
+                .contentLength(file.length())
                 .body(resource);
     }
 }

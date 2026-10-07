@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard,
@@ -129,6 +129,7 @@ const IMCDashboardLayout = () => {
             { path: '/imc/queue', label: 'Invoices Queue', icon: ListFilter },
             { path: '/imc/vendors', label: 'New Requests', icon: User },
             { path: '/imc/directory', label: 'Vendor Directory', icon: Building },
+            { path: '/imc/history', label: 'Action History', icon: CheckCircle },
             { path: '/imc/reports', label: 'Reports', icon: FileBarChart },
         ];
 

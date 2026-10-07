@@ -76,6 +76,7 @@ public class VendorInvoiceQueryService {
                 response.setSgst(invoice.getSgstAmount());
                 response.setTotalAmount(invoice.getTotalAmount());
                 response.setStatus(invoice.getStatus().name());
+                response.setSubmittedAt(invoice.getCreatedAt());
 
                 response.setTimeline(buildTimeline(invoice, logs));
 
@@ -209,5 +210,4 @@ public class VendorInvoiceQueryService {
                 
                 return buildTimeline(invoice, logs);
         }
-
 }

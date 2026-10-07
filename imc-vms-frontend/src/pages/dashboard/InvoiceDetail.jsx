@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, CheckCircle, Clock, XCircle, FileText, Download, AlertTriangle } from 'lucide-react';
 import apiClient from '../../services/apiClient';
@@ -77,17 +77,38 @@ const InvoiceDetail = () => {
         if (!documents?.length) return;
         const doc = documents[0];
         try {
-            const blob = await apiClient.get(`/documents/download/${doc.id}`, { responseType: 'blob' });
+            const res = await apiClient.get(`/documents/download/${doc.id}`, { responseType: 'blob' });
+            const contentType = doc.fileType || 'application/pdf';
+            const blob = res instanceof Blob ? res : new Blob([res], { type: contentType });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = doc.fileName || `invoice_${id}`;
+            a.download = doc.fileName || `invoice_${id}.pdf`;
             document.body.appendChild(a);
             a.click();
             a.remove();
-            window.URL.revokeObjectURL(url);
+            setTimeout(() => window.URL.revokeObjectURL(url), 1000);
         } catch (e) {
             console.error('Download failed', e);
+            alert(t('invoiceDetail.downloadFailed'));
+        }
+    };
+
+    const handleViewFirstDocument = async () => {
+        if (!documents?.length) {
+            alert('No document attached to this invoice.');
+            return;
+        }
+        const doc = documents[0];
+        try {
+            const res = await apiClient.get(`/documents/download/${doc.id}`, { responseType: 'blob' });
+            const contentType = doc.fileType || 'application/pdf';
+            const blob = res instanceof Blob ? res : new Blob([res], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+        } catch (e) {
+            console.error('View document failed', e);
             alert(t('invoiceDetail.downloadFailed'));
         }
     };
@@ -112,7 +133,7 @@ const InvoiceDetail = () => {
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
                 marginBottom: '2rem'
             }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
                     <div>
                         <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.5rem' }}>
                             {invoice.vendorInvoiceNumber}
@@ -136,6 +157,42 @@ const InvoiceDetail = () => {
                             marginTop: '0.5rem'
                         }}>
                             {String(invoice.status || '').replaceAll('_', ' ')}
+                        </span>
+                    </div>
+                </div>
+
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+                    gap: '1rem',
+                    padding: '1.25rem',
+                    backgroundColor: '#F8FAFC',
+                    borderRadius: '8px',
+                    border: '1px solid #E2E8F0',
+                    marginBottom: '1rem'
+                }}>
+                    <div>
+                        <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748B', fontWeight: 600, textTransform: 'uppercase' }}>Base Amount</span>
+                        <span style={{ fontSize: '1.05rem', fontWeight: 600, color: '#1E293B' }}>₹ {Number(invoice.baseAmount ?? 0).toLocaleString()}</span>
+                    </div>
+                    <div>
+                        <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748B', fontWeight: 600, textTransform: 'uppercase' }}>CGST (9%)</span>
+                        <span style={{ fontSize: '1.05rem', fontWeight: 600, color: '#1E293B' }}>₹ {Number(invoice.cgst ?? 0).toLocaleString()}</span>
+                    </div>
+                    <div>
+                        <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748B', fontWeight: 600, textTransform: 'uppercase' }}>SGST (9%)</span>
+                        <span style={{ fontSize: '1.05rem', fontWeight: 600, color: '#1E293B' }}>₹ {Number(invoice.sgst ?? 0).toLocaleString()}</span>
+                    </div>
+                    <div>
+                        <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748B', fontWeight: 600, textTransform: 'uppercase' }}>Total Amount</span>
+                        <span style={{ fontSize: '1.05rem', fontWeight: 700, color: '#003366' }}>₹ {Number(invoice.totalAmount ?? 0).toLocaleString()}</span>
+                    </div>
+                    <div>
+                        <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748B', fontWeight: 600, textTransform: 'uppercase' }}>Submitted Date</span>
+                        <span style={{ fontSize: '1.05rem', fontWeight: 500, color: '#475569' }}>
+                            {invoice.submittedAt && !Number.isNaN(new Date(invoice.submittedAt).getTime())
+                                ? new Date(invoice.submittedAt).toLocaleDateString(locale)
+                                : '-'}
                         </span>
                     </div>
                 </div>
@@ -203,13 +260,18 @@ const InvoiceDetail = () => {
                 justifyContent: 'flex-end',
                 gap: '1rem'
             }}>
-                <button style={{
-                    display: 'flex', alignItems: 'center', gap: '0.5rem',
-                    padding: '0.75rem 1.5rem',
-                    border: '1px solid #E2E8F0', borderRadius: '8px',
-                    backgroundColor: 'white', color: '#0F172A', fontWeight: 600,
-                    cursor: 'pointer'
-                }}>
+                <button
+                    onClick={handleViewFirstDocument}
+                    disabled={!documents?.length}
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: '0.5rem',
+                        padding: '0.75rem 1.5rem',
+                        border: '1px solid #E2E8F0', borderRadius: '8px',
+                        backgroundColor: 'white', color: '#0F172A', fontWeight: 600,
+                        cursor: documents?.length ? 'pointer' : 'not-allowed',
+                        opacity: documents?.length ? 1 : 0.6
+                    }}
+                >
                     <FileText size={18} /> {t('invoiceDetail.viewInvoice')}
                 </button>
                 <button onClick={handleDownloadFirstDocument} disabled={!documents?.length} style={{

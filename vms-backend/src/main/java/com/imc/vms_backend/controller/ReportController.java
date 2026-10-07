@@ -1,11 +1,13 @@
 package com.imc.vms_backend.controller;
 
+import com.imc.vms_backend.dto.InvoiceActionHistoryRow;
 import com.imc.vms_backend.dto.InvoiceReportFilterRequest;
 import com.imc.vms_backend.dto.InvoiceReportRow;
 import com.imc.vms_backend.services.InvoiceReportService;
 import com.imc.vms_backend.util.CsvExporter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +18,13 @@ import java.util.List;
 public class ReportController {
 
     private final InvoiceReportService reportService;
+
+    @GetMapping("/history")
+    public ResponseEntity<List<InvoiceActionHistoryRow>> getActionHistory(Authentication auth) {
+        return ResponseEntity.ok(
+                reportService.getUserActionHistory(auth.getName())
+        );
+    }
 
     @PostMapping("/invoices")
     public ResponseEntity<List<InvoiceReportRow>> getInvoiceReport(

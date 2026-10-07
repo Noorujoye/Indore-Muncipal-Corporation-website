@@ -52,22 +52,13 @@ public class VendorService {
         }
 
         Vendor.VendorStatus status = vendor.getStatus();
-        if (status == Vendor.VendorStatus.PENDING) {
-            throw new ApiException("Your registration is awaiting approval. Please wait for the approval email.");
-        }
-        if (status == Vendor.VendorStatus.REJECTED) {
-            throw new ApiException("Your registration was rejected. Please re-apply with correct information.");
-        }
-        if (status == Vendor.VendorStatus.BLOCKED) {
-            throw new ApiException("Your account is blocked. Please contact support.");
+        if (status != Vendor.VendorStatus.ACTIVE && status != Vendor.VendorStatus.APPROVED) {
+            return;
         }
 
         User user = vendor.getUser();
-        if (user == null) {
+        if (user == null || user.getStatus() != User.UserStatus.ACTIVE) {
             return;
-        }
-        if (user.getStatus() != User.UserStatus.ACTIVE) {
-            throw new ApiException("User account is not active");
         }
 
         
@@ -323,6 +314,4 @@ public class VendorService {
     public java.util.List<Vendor> getPendingVendors() {
         return vendorRepository.findByStatus(Vendor.VendorStatus.PENDING);
     }
-
-    
 }

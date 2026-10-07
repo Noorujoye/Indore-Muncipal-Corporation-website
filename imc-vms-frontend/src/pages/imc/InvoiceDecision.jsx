@@ -1,6 +1,6 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, FileText, ShieldCheck, XCircle } from 'lucide-react';
+import { ArrowLeft, FileText, ShieldCheck, XCircle, CheckCircle } from 'lucide-react';
 import apiClient from '../../services/apiClient';
 
 const InvoiceDecision = () => {
@@ -39,16 +39,22 @@ const InvoiceDecision = () => {
         fetchDetail();
     }, [id]);
 
-    const downloadDocument = async (docId, fileName = 'document') => {
-        const blob = await apiClient.get(`/documents/download/${docId}`, { responseType: 'blob' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
+    const downloadDocument = async (docId, fileName = 'document.pdf') => {
+        try {
+            const res = await apiClient.get(`/documents/download/${docId}`, { responseType: 'blob' });
+            const blob = res instanceof Blob ? res : new Blob([res], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+        } catch (e) {
+            console.error('Failed to download document', e);
+            alert('Failed to download document');
+        }
     };
 
     const handleApprove = async () => {
@@ -85,9 +91,35 @@ const InvoiceDecision = () => {
         }
     };
 
+    const handleMarkPaid = async () => {
+        if (!confirm('Confirm payment disbursement? This marks the invoice as PAID and completes the transaction.')) return;
+        setProcessing(true);
+        try {
+            await apiClient.post(`/approver/invoices/${id}/mark-paid`);
+            navigate('/imc/queue');
+        } catch (err) {
+            alert('Error marking as paid: ' + (err?.message || 'Unknown error'));
+        } finally {
+            setProcessing(false);
+        }
+    };
+
     if (loading) return <div style={{ padding: '2rem' }}>Loading Invoice Details...</div>;
     if (error) return <div style={{ padding: '2rem', color: '#DC2626' }}>{error}</div>;
     if (!invoiceData) return null;
+
+    const currentStatus = invoiceData.currentStatus || invoiceData.status || '';
+
+    const isPaid = currentStatus === 'PAID';
+    const isReadyForPayment = currentStatus === 'READY_FOR_PAYMENT';
+    const isRejected = currentStatus.includes('REJECTED');
+
+    const canCreatorAct = role === 'CREATOR' && currentStatus === 'SUBMITTED';
+    const canVerifierAct = role === 'VERIFIER' && (currentStatus === 'CREATOR_APPROVED' || currentStatus === 'APPROVER_REJECTED');
+    const canApproverApprove = role === 'APPROVER' && currentStatus === 'VERIFIER_APPROVED';
+    const canApproverPay = role === 'APPROVER' && currentStatus === 'READY_FOR_PAYMENT';
+
+    const canStandardAct = canCreatorAct || canVerifierAct || canApproverApprove;
 
     const invoiceSummary = {
         invoiceNumber: invoiceData.vendorInvoiceNumber,
@@ -98,6 +130,10 @@ const InvoiceDecision = () => {
         submittedAt: invoiceData.submittedAt,
     };
 
+    const submittedDateFormatted = invoiceSummary.submittedAt && !Number.isNaN(new Date(invoiceSummary.submittedAt).getTime())
+        ? new Date(invoiceSummary.submittedAt).toLocaleDateString()
+        : '-';
+
     const auditTrail = Array.isArray(invoiceData.timeline)
         ? invoiceData.timeline
         : [];
@@ -105,7 +141,7 @@ const InvoiceDecision = () => {
     const approveLabel = role === 'APPROVER'
         ? 'APPROVE FOR PAYMENT'
         : role === 'VERIFIER'
-            ? 'VERIFY & FORWARD'
+            ? (currentStatus === 'APPROVER_REJECTED' ? 'RE-VERIFY & FORWARD' : 'VERIFY & FORWARD')
             : 'FORWARD TO VERIFIER';
 
     return (
@@ -145,7 +181,7 @@ const InvoiceDecision = () => {
                                 </div>
                                 <div>
                                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748B', marginBottom: '0.25rem' }}>SUBMITTED DATE</label>
-                                    <div style={{ fontSize: '1rem' }}>{new Date(invoiceSummary.submittedAt).toLocaleDateString()}</div>
+                                    <div style={{ fontSize: '1rem' }}>{submittedDateFormatted}</div>
                                 </div>
                             </div>
 
@@ -207,36 +243,96 @@ const InvoiceDecision = () => {
                 </div>
 
                 <div>
-                    <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: '#CBD5E1', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
-                        <div className="gov-card-header" style={{ backgroundColor: '#003366', color: 'white' }}>
-                            OFFICIAL ACTION
-                        </div>
-                        <div className="gov-card-body">
-                            <div style={{ marginBottom: '1.5rem' }}>
-                                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.5rem' }}>
-                                    Remarks <span style={{ color: '#DC2626' }}>*</span>
-                                </label>
-                                <textarea
-                                    className="gov-input"
-                                    rows="4"
-                                    placeholder="Enter official remarks..."
-                                    value={remarks}
-                                    onChange={(e) => setRemarks(e.target.value)}
-                                    style={{ resize: 'vertical', minHeight: '100px' }}
-                                />
+                    {isPaid ? (
+                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: '#86EFAC', backgroundColor: '#F0FDF4' }}>
+                            <div className="gov-card-header" style={{ backgroundColor: '#15803D', color: 'white' }}>
+                                PAYMENT SETTLED
                             </div>
-
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                <button onClick={handleApprove} disabled={processing} className="btn-gov btn-success" style={{ width: '100%', padding: '1rem' }}>
-                                    <ShieldCheck size={18} style={{ marginRight: '0.5rem' }} /> {approveLabel}
-                                </button>
-
-                                <button onClick={handleReject} disabled={processing} className="btn-gov btn-danger" style={{ width: '100%' }}>
-                                    <XCircle size={16} style={{ marginRight: '0.5rem' }} /> REJECT INVOICE
-                                </button>
+                            <div className="gov-card-body" style={{ textAlign: 'center', padding: '1.5rem' }}>
+                                <CheckCircle size={40} color="#15803D" style={{ margin: '0 auto 1rem' }} />
+                                <div style={{ fontWeight: 700, fontSize: '1rem', color: '#166534', marginBottom: '0.5rem' }}>
+                                    Invoice Paid & Closed
+                                </div>
+                                <p style={{ fontSize: '0.85rem', color: '#15803D', lineHeight: 1.4 }}>
+                                    This invoice has been disbursed and marked as PAID. No further actions can be taken.
+                                </p>
                             </div>
                         </div>
-                    </div>
+                    ) : canApproverPay ? (
+                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: '#CBD5E1', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+                            <div className="gov-card-header" style={{ backgroundColor: '#003366', color: 'white' }}>
+                                DISBURSE PAYMENT
+                            </div>
+                            <div className="gov-card-body">
+                                <p style={{ fontSize: '0.85rem', color: '#475569', marginBottom: '1.25rem', lineHeight: 1.5 }}>
+                                    This invoice has received all municipal approvals and is ready for payment disbursement.
+                                </p>
+                                <button onClick={handleMarkPaid} disabled={processing} className="btn-gov btn-success" style={{ width: '100%', padding: '1rem' }}>
+                                    <ShieldCheck size={18} style={{ marginRight: '0.5rem' }} /> MARK AS PAID
+                                </button>
+                            </div>
+                        </div>
+                    ) : canStandardAct ? (
+                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: '#CBD5E1', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+                            <div className="gov-card-header" style={{ backgroundColor: '#003366', color: 'white' }}>
+                                OFFICIAL ACTION
+                            </div>
+                            <div className="gov-card-body">
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+                                        Remarks {currentStatus === 'APPROVER_REJECTED' && <span style={{ color: '#DC2626' }}>*</span>}
+                                    </label>
+                                    <textarea
+                                        className="gov-input"
+                                        rows="4"
+                                        placeholder="Enter official remarks..."
+                                        value={remarks}
+                                        onChange={(e) => setRemarks(e.target.value)}
+                                        style={{ resize: 'vertical', minHeight: '100px' }}
+                                    />
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                    <button onClick={handleApprove} disabled={processing} className="btn-gov btn-success" style={{ width: '100%', padding: '1rem' }}>
+                                        <ShieldCheck size={18} style={{ marginRight: '0.5rem' }} /> {approveLabel}
+                                    </button>
+
+                                    <button onClick={handleReject} disabled={processing} className="btn-gov btn-danger" style={{ width: '100%' }}>
+                                        <XCircle size={16} style={{ marginRight: '0.5rem' }} /> REJECT INVOICE
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ) : isRejected ? (
+                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: '#FECACA', backgroundColor: '#FEF2F2' }}>
+                            <div className="gov-card-header" style={{ backgroundColor: '#B91C1C', color: 'white' }}>
+                                INVOICE REJECTED
+                            </div>
+                            <div className="gov-card-body" style={{ textAlign: 'center', padding: '1.5rem' }}>
+                                <XCircle size={40} color="#B91C1C" style={{ margin: '0 auto 1rem' }} />
+                                <div style={{ fontWeight: 700, fontSize: '1rem', color: '#991B1B', marginBottom: '0.5rem' }}>
+                                    Status: {currentStatus}
+                                </div>
+                                <p style={{ fontSize: '0.85rem', color: '#B91C1C', lineHeight: 1.4 }}>
+                                    This invoice was rejected during review and cannot be modified.
+                                </p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: '#E2E8F0', backgroundColor: '#F8FAFC' }}>
+                            <div className="gov-card-header" style={{ backgroundColor: '#475569', color: 'white' }}>
+                                STATUS: {currentStatus}
+                            </div>
+                            <div className="gov-card-body" style={{ textAlign: 'center', padding: '1.5rem' }}>
+                                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: '#334155', marginBottom: '0.5rem' }}>
+                                    Pending Subsequent Stage
+                                </div>
+                                <p style={{ fontSize: '0.85rem', color: '#64748B', lineHeight: 1.4 }}>
+                                    No immediate actions required from your role for this invoice.
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
             </div>

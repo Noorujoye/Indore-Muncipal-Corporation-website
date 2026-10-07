@@ -18,6 +18,7 @@ public class VendorInvoiceDetailResponse {
     private BigDecimal totalAmount;
 
     private String status;
+    private java.time.LocalDateTime submittedAt;
 
     private List<InvoiceTimelineStep> timeline;
 }

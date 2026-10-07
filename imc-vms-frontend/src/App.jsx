@@ -1,4 +1,4 @@
-﻿import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Home from './pages/Home';
@@ -94,7 +94,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="history" element={
-              <ProtectedRoute allowedRoles={['VERIFIER', 'APPROVER']}>
+              <ProtectedRoute allowedRoles={['CREATOR', 'VERIFIER', 'APPROVER']}>
                 <InvoiceHistory />
               </ProtectedRoute>
             } />

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, Filter } from 'lucide-react';
 import apiClient from '../../services/apiClient';
@@ -61,8 +61,7 @@ const InvoicesQueue = ({ filter }) => {
                         else status = 'CREATOR_REJECTED';
                     }
                     if (filter === 'RETURNED') {
-                        
-                        status = 'CREATOR_REJECTED';
+                        status = 'APPROVER_REJECTED';
                     }
 
                     rows = status ? await apiClient.post('/reports/invoices', { status }) : [];
@@ -144,7 +143,7 @@ const InvoicesQueue = ({ filter }) => {
                                 {role !== 'CREATOR' && <th>TENDER REF</th>}
                                 <th>AMOUNT (₹)</th>
                                 <th>CURRENT STAGE</th>
-                                <th>{role === 'APPROVER' ? 'VERIFIED ON' : 'SUBMITTED DATE'}</th>
+                                <th>SUBMITTED DATE</th>
                                 <th style={{ textAlign: 'right' }}>ACTION</th>
                             </tr>
                         </thead>
@@ -159,7 +158,7 @@ const InvoicesQueue = ({ filter }) => {
                                         <StatusBadge status={inv.currentStage} />
                                     </td>
                                     <td>
-                                        {role === 'APPROVER' ? inv.verifiedOn : inv.submittedAt}
+                                        {inv.submittedAt}
                                     </td>
                                     <td style={{ textAlign: 'right' }}>
                                         <button

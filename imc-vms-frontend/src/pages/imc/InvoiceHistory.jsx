@@ -14,46 +14,30 @@ const InvoiceHistory = () => {
 
         const fetchHistory = async () => {
             try {
-                const toDate = new Date();
-                const fromDate = new Date();
-                fromDate.setDate(toDate.getDate() - 30);
-
-                const pad = (n) => String(n).padStart(2, '0');
-                const isoDate = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-
-                const rows = await apiClient.post('/reports/invoices', {
-                    fromDate: isoDate(fromDate),
-                    toDate: isoDate(toDate),
-                });
+                const rows = await apiClient.get('/reports/history');
 
                 const normalized = Array.isArray(rows)
                     ? rows.map((r) => {
-                        const status = r.status;
-                        let action = 'Processed';
-                        if (status === 'READY_FOR_PAYMENT') action = 'Approved';
-                        else if (String(status).includes('REJECTED')) action = 'Rejected';
-                        else if (status === 'VERIFIER_APPROVED' || status === 'CREATOR_APPROVED') action = 'Forwarded';
-                        else if (status === 'SUBMITTED') action = 'Submitted';
-
-                        const created = r.createdAt ? new Date(r.createdAt) : null;
-                        const date = created && !Number.isNaN(created.getTime())
-                            ? created.toLocaleDateString()
+                        const d = r.actionTimestamp ? new Date(r.actionTimestamp) : null;
+                        const date = d && !Number.isNaN(d.getTime())
+                            ? d.toLocaleDateString()
                             : '-';
 
                         return {
-                            id: r.invoiceId,
-                            action,
-                            invoice: r.vendorInvoiceNumber,
-                            vendor: r.vendorName,
+                            id: r.logId || `${r.invoiceId}-${r.actionTimestamp}`,
+                            action: r.action || 'Processed',
+                            invoice: r.invoiceNumber || '-',
+                            vendor: r.vendorName || '-',
                             date,
-                            status,
+                            status: r.currentStatus || '-',
+                            remarks: r.remarks,
                         };
                     })
                     : [];
 
                 setHistory(normalized);
             } catch (error) {
-                console.error("Failed to fetch history");
+                console.error("Failed to fetch history", error);
             } finally {
                 setLoading(false);
             }
@@ -63,11 +47,10 @@ const InvoiceHistory = () => {
     }, []);
 
     const getActionIcon = (action) => {
-        switch (action) {
-            case 'Approved': return <CheckCircle size={16} color="#10B981" />;
-            case 'Rejected': return <XCircle size={16} color="#EF4444" />;
-            default: return <Clock size={16} color="#3B82F6" />;
-        }
+        if (!action) return <Clock size={16} color="#3B82F6" />;
+        if (action.includes('Approved') || action.includes('Paid')) return <CheckCircle size={16} color="#10B981" />;
+        if (action.includes('Reject')) return <XCircle size={16} color="#EF4444" />;
+        return <Clock size={16} color="#3B82F6" />;
     };
 
     return (
@@ -89,31 +72,39 @@ const InvoiceHistory = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {history.map((item) => (
-                            <tr key={item.id}>
-                                <td style={{ color: '#64748B' }}>{item.date}</td>
-                                <td style={{ fontWeight: 600 }}>{item.invoice}</td>
-                                <td>{item.vendor}</td>
-                                <td>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500 }}>
-                                        {getActionIcon(item.action)}
-                                        {item.action}
-                                    </div>
-                                </td>
-                                <td>
-                                    <span style={{
-                                        fontSize: '0.75rem',
-                                        padding: '0.1rem 0.5rem',
-                                        borderRadius: '4px',
-                                        backgroundColor: '#F1F5F9',
-                                        color: '#475569',
-                                        border: '1px solid #E2E8F0'
-                                    }}>
-                                        {item.status}
-                                    </span>
+                        {history.length > 0 ? (
+                            history.map((item) => (
+                                <tr key={item.id}>
+                                    <td style={{ color: '#64748B' }}>{item.date}</td>
+                                    <td style={{ fontWeight: 600 }}>{item.invoice}</td>
+                                    <td>{item.vendor}</td>
+                                    <td>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500 }}>
+                                            {getActionIcon(item.action)}
+                                            {item.action}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span style={{
+                                            fontSize: '0.75rem',
+                                            padding: '0.1rem 0.5rem',
+                                            borderRadius: '4px',
+                                            backgroundColor: '#F1F5F9',
+                                            color: '#475569',
+                                            border: '1px solid #E2E8F0'
+                                        }}>
+                                            {item.status}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="5" style={{ textAlign: 'center', padding: '3rem', color: '#94A3B8' }}>
+                                    No invoice processing history recorded for your account yet.
                                 </td>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </table>
             </div>

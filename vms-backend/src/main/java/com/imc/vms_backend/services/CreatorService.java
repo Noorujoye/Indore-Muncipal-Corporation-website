@@ -206,7 +206,6 @@ public class CreatorService {
         vendorRepository.save(vendor);
     }
 
-    
     public void approveVendor(Long vendorId) {
 
         Vendor vendor = vendorRepository.findById(vendorId)
@@ -218,8 +217,6 @@ public class CreatorService {
 
         User user = vendor.getUser();
 
-        
-        
         user.setPasswordHash(passwordEncoder.encode(PasswordGenerator.generatePassword(24)));
         user.setStatus(User.UserStatus.ACTIVE);
 
@@ -232,7 +229,6 @@ public class CreatorService {
 
         String setPasswordLink = passwordActionTokenService.createSetPasswordLink(user);
 
-        
         emailService.sendEmail(
                 user.getEmail(),
                 EmailType.VENDOR_APPROVED,

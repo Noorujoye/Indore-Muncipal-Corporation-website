@@ -23,17 +23,22 @@ public class AuthService {
 
     public TokenResponse login(LoginRequest request) {
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ApiException("Invalid email or password"));
+        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
 
-        if (user.getStatus() != User.UserStatus.ACTIVE) {
-            throw new ApiException("User account is not active");
+        if (user == null) {
+            // Constant-time dummy verification to resist timing attacks
+            passwordEncoder.matches(request.getPassword(), "$2a$10$dummyHashToPreventTimingEnumerationAttackOnly..");
+            throw new ApiException("Invalid email or password");
         }
 
         boolean passwordMatch = passwordEncoder.matches(request.getPassword(), user.getPasswordHash());
 
         if (!passwordMatch) {
             throw new ApiException("Invalid email or password");
+        }
+
+        if (user.getStatus() != User.UserStatus.ACTIVE) {
+            throw new ApiException("User account is not active");
         }
 
         String accessToken = jwtUtil.generateAccessToken(user.getEmail(), user.getRole().name());

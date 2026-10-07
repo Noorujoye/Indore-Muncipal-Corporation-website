@@ -43,7 +43,9 @@ public class ImcInvoiceQueryService {
                 response.setSgst(invoice.getSgstAmount());
                 response.setTotalAmount(invoice.getTotalAmount());
 
+                response.setStatus(invoice.getStatus().name());
                 response.setCurrentStatus(invoice.getStatus().name());
+                response.setSubmittedAt(invoice.getCreatedAt());
 
                 
                 List<InvoiceTimelineStep> timeline = timelineHelperService.buildTimelineForReuse(invoice, logs);

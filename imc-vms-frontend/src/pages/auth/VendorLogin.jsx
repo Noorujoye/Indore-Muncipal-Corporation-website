@@ -80,7 +80,7 @@ const VendorLogin = () => {
 
         const email = (formData.email || '').trim();
         if (!email) {
-            setBanner({ variant: 'error', message: 'Enter your email first, then click Forgot ID.' });
+            setBanner({ variant: 'error', message: 'Enter your email first, then click Forgot Password.' });
             return;
         }
 
@@ -148,7 +148,7 @@ const VendorLogin = () => {
                             disabled={forgotLoading}
                             style={{ background: 'transparent', border: 'none', padding: 0, cursor: forgotLoading ? 'not-allowed' : 'pointer' }}
                         >
-                            {forgotLoading ? 'Sending...' : t('auth.forgotId')}
+                            {forgotLoading ? 'Sending...' : t('auth.forgotPassword')}
                         </button>
                     </label>
                     <div className="auth-inputWrap">

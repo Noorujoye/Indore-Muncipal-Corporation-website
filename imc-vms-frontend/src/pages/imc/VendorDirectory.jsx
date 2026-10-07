@@ -264,7 +264,7 @@ const VendorDirectory = () => {
                                 </td>
                                 <td>{vendor.type}</td>
                                 <td style={{ color: '#003366' }}>{vendor.email}</td>
-                                <td>{new Date(vendor.joined).toLocaleDateString()}</td>
+                                <td>{vendor.joined && !Number.isNaN(new Date(vendor.joined).getTime()) ? new Date(vendor.joined).toLocaleDateString() : '-'}</td>
                                 <td>
                                     <span className={`gov-badge ${vendor.status === 'ACTIVE' ? 'gov-badge-success' : 'gov-badge-danger'}`}>
                                         {vendor.status}

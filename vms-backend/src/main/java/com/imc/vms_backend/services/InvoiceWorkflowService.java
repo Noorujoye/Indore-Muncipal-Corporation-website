@@ -26,6 +26,10 @@ public class InvoiceWorkflowService {
 
         Invoice invoice = getInvoice(invoiceId);
 
+        if (invoice.getStatus() == Invoice.InvoiceStatus.PAID) {
+            throw new ApiException("Invoice has already been paid and cannot be modified");
+        }
+
         if (invoice.getStatus() != Invoice.InvoiceStatus.SUBMITTED) {
             throw new ApiException("Invoice is not in submitted state");
         }
@@ -44,6 +48,10 @@ public class InvoiceWorkflowService {
 
         Invoice invoice = getInvoice(invoiceId);
 
+        if (invoice.getStatus() == Invoice.InvoiceStatus.PAID) {
+            throw new ApiException("Invoice has already been paid and cannot be modified");
+        }
+
         if (invoice.getStatus() != Invoice.InvoiceStatus.SUBMITTED) {
             throw new ApiException("Invoice is not in submitted state");
         }
@@ -60,8 +68,13 @@ public class InvoiceWorkflowService {
 
         Invoice invoice = getInvoice(invoiceId);
 
-        if (invoice.getStatus() != Invoice.InvoiceStatus.CREATOR_APPROVED) {
-            throw new ApiException("Invoice not approved by creator");
+        if (invoice.getStatus() == Invoice.InvoiceStatus.PAID) {
+            throw new ApiException("Invoice has already been paid and cannot be modified");
+        }
+
+        if (invoice.getStatus() != Invoice.InvoiceStatus.CREATOR_APPROVED
+                && invoice.getStatus() != Invoice.InvoiceStatus.APPROVER_REJECTED) {
+            throw new ApiException("Invoice is not in a verifiable state (must be CREATOR_APPROVED or APPROVER_REJECTED)");
         }
 
         User user = getUser(email);
@@ -75,6 +88,10 @@ public class InvoiceWorkflowService {
     public void markPaid(Long invoiceId, String email) {
 
         Invoice invoice = getInvoice(invoiceId);
+
+        if (invoice.getStatus() == Invoice.InvoiceStatus.PAID) {
+            throw new ApiException("Invoice has already been paid");
+        }
 
         if (invoice.getStatus() != Invoice.InvoiceStatus.READY_FOR_PAYMENT) {
             throw new ApiException("Invoice is not ready for payment");
@@ -94,8 +111,13 @@ public class InvoiceWorkflowService {
 
         Invoice invoice = getInvoice(invoiceId);
 
-        if (invoice.getStatus() != Invoice.InvoiceStatus.CREATOR_APPROVED) {
-            throw new ApiException("Invoice not approved by creator");
+        if (invoice.getStatus() == Invoice.InvoiceStatus.PAID) {
+            throw new ApiException("Invoice has already been paid and cannot be modified");
+        }
+
+        if (invoice.getStatus() != Invoice.InvoiceStatus.CREATOR_APPROVED
+                && invoice.getStatus() != Invoice.InvoiceStatus.APPROVER_REJECTED) {
+            throw new ApiException("Invoice is not in a verifiable state (must be CREATOR_APPROVED or APPROVER_REJECTED)");
         }
 
         User user = getUser(email);
@@ -109,6 +131,14 @@ public class InvoiceWorkflowService {
     public void approverApprove(Long invoiceId, String email) {
 
         Invoice invoice = getInvoice(invoiceId);
+
+        if (invoice.getStatus() == Invoice.InvoiceStatus.PAID) {
+            throw new ApiException("Invoice has already been paid and cannot be modified");
+        }
+
+        if (invoice.getStatus() == Invoice.InvoiceStatus.READY_FOR_PAYMENT) {
+            throw new ApiException("Invoice is already approved and ready for payment");
+        }
 
         if (invoice.getStatus() != Invoice.InvoiceStatus.VERIFIER_APPROVED) {
             throw new ApiException("Invoice not verified");
@@ -127,6 +157,10 @@ public class InvoiceWorkflowService {
         validateRemarks(request);
 
         Invoice invoice = getInvoice(invoiceId);
+
+        if (invoice.getStatus() == Invoice.InvoiceStatus.PAID) {
+            throw new ApiException("Invoice has already been paid and cannot be modified");
+        }
 
         if (invoice.getStatus() != Invoice.InvoiceStatus.VERIFIER_APPROVED) {
             throw new ApiException("Invoice not verified");

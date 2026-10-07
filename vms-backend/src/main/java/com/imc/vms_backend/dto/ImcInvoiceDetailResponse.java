@@ -3,6 +3,7 @@ package com.imc.vms_backend.dto;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -22,7 +23,9 @@ public class ImcInvoiceDetailResponse {
     private BigDecimal sgst;
     private BigDecimal totalAmount;
 
+    private String status;
     private String currentStatus;
+    private LocalDateTime submittedAt;
 
     private List<InvoiceTimelineStep> timeline;
 }
