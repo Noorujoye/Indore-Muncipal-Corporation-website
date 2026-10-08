@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard,
@@ -12,9 +12,11 @@ import {
     ChevronDown,
     MessageSquare
 } from 'lucide-react';
-import apiClient from '../../services/apiClient';
-import { authStorage } from '../../services/apiClient';
+import apiClient, { authStorage } from '../../services/apiClient';
+import { clearCachedMe } from '../auth/ProtectedRoute';
 import { useTranslation } from 'react-i18next';
+import ThemeToggle from '../common/ThemeToggle';
+import LanguageToggle from '../common/LanguageToggle';
 
 const VendorDashboardLayout = () => {
     const { t } = useTranslation();
@@ -110,9 +112,11 @@ const VendorDashboardLayout = () => {
     const vendorRoleLabel = t('vendorLayout.vendorRole');
 
     const handleLogout = () => {
-        
+        setIsProfileOpen(false);
+        setIsSidebarOpen(false);
         apiClient.post('/auth/logout').catch(() => undefined);
         authStorage.clearAuthStorage();
+        clearCachedMe();
         navigate('/');
     };
 
@@ -130,41 +134,39 @@ const VendorDashboardLayout = () => {
     };
 
     return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#F1F5F9', display: 'flex', flexDirection: 'column' }}>
-
-            <header style={{
-                height: '64px',
-                backgroundColor: 'white',
-                borderBottom: '1px solid #E2E8F0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0 1.5rem',
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                zIndex: 50
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div className="portal-layout">
+            <header className="portal-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <button
-                        className="md:hidden"
+                        className="mobile-only touch-target"
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        style={{ border: 'none', background: 'none', cursor: 'pointer' }}
+                        aria-label="Toggle navigation drawer"
+                        style={{
+                            border: '1px solid var(--border-color)',
+                            backgroundColor: 'transparent',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            color: 'var(--text-color)',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '0.4rem'
+                        }}
                     >
-                        {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+                        {isSidebarOpen ? <X size={22} /> : <Menu size={22} />}
                     </button>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <img src="/imc-logo-enhanced.png" alt={t('brand.logoAlt')} style={{ height: '40px' }} />
-                        <div className="hidden sm:block" style={{ lineHeight: 1.2 }}>
-                            <div style={{ fontWeight: 700, color: '#0A3D62', fontSize: '0.9rem' }}>{t('brand.org')}</div>
-                            <div style={{ fontSize: '0.75rem', color: '#64748B' }}>{t('brand.systemUpper')}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <img src="/imc-logo-enhanced.png" alt={t('brand.logoAlt')} style={{ height: '36px' }} />
+                        <div className="desktop-only" style={{ flexDirection: 'column', lineHeight: 1.15 }}>
+                            <div style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '0.85rem' }}>{t('brand.org')}</div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--gray-600)', letterSpacing: '0.04em' }}>{t('brand.systemUpper')}</div>
                         </div>
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <LanguageToggle />
+                    <ThemeToggle />
 
                     <div ref={notificationsRef} style={{ position: 'relative' }}>
                         <button
@@ -172,24 +174,27 @@ const VendorDashboardLayout = () => {
                                 setIsNotificationsOpen((prev) => !prev);
                                 setIsProfileOpen(false);
                             }}
+                            className="touch-target"
                             style={{
                                 position: 'relative',
                                 border: 'none',
                                 background: 'none',
                                 cursor: 'pointer',
-                                color: '#64748B',
-                                padding: '0.25rem',
-                                borderRadius: '4px'
+                                color: 'var(--gray-600)',
+                                padding: '0.4rem',
+                                borderRadius: '6px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
                             }}
-                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F8FAFC'}
-                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                            aria-label="Notifications"
                         >
                             <Bell size={20} />
                             {notifications.length > 0 && (
                                 <span style={{
                                     position: 'absolute',
-                                    top: 0,
-                                    right: 0,
+                                    top: '6px',
+                                    right: '6px',
                                     width: '8px',
                                     height: '8px',
                                     backgroundColor: '#EF4444',
@@ -204,43 +209,20 @@ const VendorDashboardLayout = () => {
                                 top: '100%',
                                 right: -10,
                                 marginTop: '0.5rem',
-                                width: '320px',
-                                backgroundColor: 'white',
+                                width: 'min(320px, 90vw)',
+                                backgroundColor: 'var(--card-bg)',
                                 borderRadius: '8px',
-                                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                                border: '1px solid #E2E8F0',
+                                boxShadow: 'var(--shadow-lg)',
+                                border: '1px solid var(--border-color)',
                                 overflow: 'hidden',
                                 zIndex: 60
                             }}>
-                                <div style={{ padding: '0.75rem 1rem', borderBottom: '1px solid #E2E8F0', fontWeight: 600, color: '#0F172A', fontSize: '0.9rem' }}>
+                                <div style={{ padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)', fontWeight: 600, color: 'var(--text-color)', fontSize: '0.9rem' }}>
                                     {t('vendorLayout.notifications.title')}
                                 </div>
-                                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                                    {notifications.map(notification => (
-                                        <div key={notification.id} style={{
-                                            padding: '0.75rem 1rem',
-                                            borderBottom: '1px solid #F1F5F9',
-                                            cursor: 'pointer',
-                                            backgroundColor: notification.type === 'alert' ? '#FFF1F2' : 'white'
-                                        }}>
-                                            <p style={{ fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>
-                                                {notification.title}
-                                            </p>
-                                            <p style={{ fontSize: '0.8rem', color: '#64748B', marginBottom: '0.25rem' }}>
-                                                {notification.message}
-                                            </p>
-                                            <p style={{ fontSize: '0.7rem', color: '#94A3B8' }}>
-                                                {notification.time}
-                                            </p>
-                                        </div>
-                                    ))}
+                                <div style={{ maxHeight: '300px', overflowY: 'auto', padding: '1rem', textAlign: 'center', color: 'var(--gray-600)', fontSize: '0.85rem' }}>
+                                    {t('vendorLayout.notifications.noNew')}
                                 </div>
-                                <button style={{
-                                    width: '100%', padding: '0.75rem', border: 'none', background: '#F8FAFC',
-                                    color: '#0A3D62', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer'
-                                }}>
-                                    {t('vendorLayout.notifications.viewAll')}
-                                </button>
                             </div>
                         )}
                     </div>
@@ -251,33 +233,33 @@ const VendorDashboardLayout = () => {
                                 setIsProfileOpen((prev) => !prev);
                                 setIsNotificationsOpen(false);
                             }}
+                            className="touch-target"
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '0.75rem',
+                                gap: '0.5rem',
                                 border: 'none',
                                 background: 'none',
                                 cursor: 'pointer',
                                 padding: '0.25rem 0.5rem',
                                 borderRadius: '6px',
-                                transition: 'background-color 0.2s'
+                                color: 'var(--text-color)'
                             }}
-                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F8FAFC'}
-                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                         >
-                            <div style={{ textAlign: 'right', display: 'none', '@media (min-width: 640px)': { display: 'block' } }} className="hidden sm:block">
-                                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1E293B' }}>{vendorName}</div>
-                                <div style={{ fontSize: '0.75rem', color: '#64748B' }}>{vendorRoleLabel}</div>
+                            <div className="desktop-only" style={{ textAlign: 'right', flexDirection: 'column' }}>
+                                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-color)' }}>{vendorName}</div>
+                                <div style={{ fontSize: '0.7rem', color: 'var(--gray-600)' }}>{vendorRoleLabel}</div>
                             </div>
                             <div style={{
-                                width: '36px',
-                                height: '36px',
+                                width: '34px',
+                                height: '34px',
                                 borderRadius: '50%',
-                                backgroundColor: '#E2E8F0',
+                                backgroundColor: 'var(--gray-200)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                color: '#64748B'
+                                color: 'var(--gray-600)',
+                                overflow: 'hidden'
                             }}>
                                 {vendorLogoUrl ? (
                                     <img
@@ -286,10 +268,10 @@ const VendorDashboardLayout = () => {
                                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                     />
                                 ) : (
-                                    <User size={20} />
+                                    <User size={18} />
                                 )}
                             </div>
-                            <ChevronDown size={14} color="#94A3B8" />
+                            <ChevronDown size={14} color="var(--gray-400)" />
                         </button>
 
                         {isProfileOpen && (
@@ -299,10 +281,10 @@ const VendorDashboardLayout = () => {
                                 right: 0,
                                 marginTop: '0.5rem',
                                 width: '200px',
-                                backgroundColor: 'white',
+                                backgroundColor: 'var(--card-bg)',
                                 borderRadius: '8px',
-                                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                                border: '1px solid #E2E8F0',
+                                boxShadow: 'var(--shadow-lg)',
+                                border: '1px solid var(--border-color)',
                                 padding: '0.5rem',
                                 zIndex: 60
                             }}>
@@ -313,7 +295,7 @@ const VendorDashboardLayout = () => {
                                         textAlign: 'left',
                                         padding: '0.75rem 1rem',
                                         fontSize: '0.9rem',
-                                        color: '#334155',
+                                        color: 'var(--text-color)',
                                         background: 'none',
                                         border: 'none',
                                         cursor: 'pointer',
@@ -322,12 +304,10 @@ const VendorDashboardLayout = () => {
                                         gap: '0.5rem',
                                         borderRadius: '4px'
                                     }}
-                                    onMouseOver={(e) => e.target.style.backgroundColor = '#F8FAFC'}
-                                    onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
                                 >
                                     <User size={16} /> {t('vendorLayout.profile.myProfile')}
                                 </button>
-                                <div style={{ height: '1px', backgroundColor: '#E2E8F0', margin: '0.5rem 0' }} />
+                                <div style={{ height: '1px', backgroundColor: 'var(--border-color)', margin: '0.5rem 0' }} />
                                 <button
                                     onClick={handleLogout}
                                     style={{
@@ -344,8 +324,6 @@ const VendorDashboardLayout = () => {
                                         gap: '0.5rem',
                                         borderRadius: '4px'
                                     }}
-                                    onMouseOver={(e) => e.target.style.backgroundColor = '#FEF2F2'}
-                                    onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
                                 >
                                     <LogOut size={16} /> {t('common.logout')}
                                 </button>
@@ -355,21 +333,9 @@ const VendorDashboardLayout = () => {
                 </div>
             </header>
 
-            <div style={{ display: 'flex', flex: 1, marginTop: '64px' }}>
-                <aside style={{
-                    width: '240px',
-                    backgroundColor: 'white',
-                    borderRight: '1px solid #E2E8F0',
-                    position: 'fixed',
-                    top: '64px',
-                    bottom: 0,
-                    left: 0,
-                    zIndex: 40,
-                    transform: isSidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
-                    transition: 'transform 0.3s ease-in-out',
-                    '@media (min-width: 768px)': { transform: 'translateX(0)' } 
-                }} className={`fixed md:relative md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                    <nav style={{ padding: '1.5rem 1rem' }}>
+            <div className="portal-body">
+                <aside className={`portal-sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
+                    <nav style={{ padding: '1.25rem 0.75rem', display: 'flex', flexDirection: 'column', height: '100%' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             {navItems.map((item) => (
                                 <NavLink
@@ -381,12 +347,13 @@ const VendorDashboardLayout = () => {
                                         alignItems: 'center',
                                         gap: '0.75rem',
                                         padding: '0.75rem 1rem',
-                                        borderRadius: '8px',
+                                        borderRadius: '6px',
                                         textDecoration: 'none',
                                         fontSize: '0.9rem',
-                                        fontWeight: 500,
-                                        color: isActive ? 'white' : '#64748B',
-                                        backgroundColor: isActive ? '#0A3D62' : 'transparent',
+                                        fontWeight: 600,
+                                        minHeight: '44px',
+                                        color: isActive ? 'white' : 'var(--gray-600)',
+                                        backgroundColor: isActive ? 'var(--primary)' : 'transparent',
                                         transition: 'all 0.2s',
                                     })}
                                 >
@@ -396,7 +363,7 @@ const VendorDashboardLayout = () => {
                             ))}
                         </div>
 
-                        <div style={{ marginTop: 'auto', paddingTop: '2rem', borderTop: '1px solid #E2E8F0' }}>
+                        <div style={{ marginTop: 'auto', paddingTop: '1.5rem', borderTop: '1px solid var(--border-color)' }}>
                             <button
                                 onClick={handleLogout}
                                 style={{
@@ -405,17 +372,15 @@ const VendorDashboardLayout = () => {
                                     alignItems: 'center',
                                     gap: '0.75rem',
                                     padding: '0.75rem 1rem',
-                                    borderRadius: '8px',
+                                    borderRadius: '6px',
                                     border: 'none',
                                     background: 'none',
                                     cursor: 'pointer',
-                                    color: '#64748B',
+                                    color: '#EF4444',
                                     fontSize: '0.9rem',
-                                    fontWeight: 500,
-                                    transition: 'color 0.2s'
+                                    fontWeight: 600,
+                                    minHeight: '44px'
                                 }}
-                                onMouseOver={(e) => e.currentTarget.style.color = '#EF4444'}
-                                onMouseOut={(e) => e.currentTarget.style.color = '#64748B'}
                             >
                                 <LogOut size={20} /> {t('common.logout')}
                             </button>
@@ -423,28 +388,14 @@ const VendorDashboardLayout = () => {
                     </nav>
                 </aside>
 
-                <main style={{
-                    flex: 1,
-                    padding: '2rem',
-                    marginLeft: '0',
-                    '@media (min-width: 768px)': { marginLeft: '240px' }
-                }} className="md:ml-60 w-full">
+                <main className="portal-main">
                     <Outlet />
                 </main>
             </div>
 
             {isSidebarOpen && (
                 <div
-                    className="md:hidden"
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                        zIndex: 30
-                    }}
+                    className="portal-backdrop"
                     onClick={() => setIsSidebarOpen(false)}
                 />
             )}

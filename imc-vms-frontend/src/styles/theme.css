@@ -29,7 +29,9 @@
 
     /* Semantic Colors */
     --bg-color: var(--bg-light);
+    --body-bg: var(--bg-light);
     --text-color: var(--text-light);
+    --text-muted: #64748B;
     --card-bg: var(--white);
     --border-color: var(--gray-200);
 
@@ -55,7 +57,9 @@
 
     /* Surfaces */
     --bg-color: var(--bg-dark);
+    --body-bg: var(--bg-dark);
     --text-color: var(--text-dark);
+    --text-muted: #94A3B8;
     --card-bg: #1E293B;
     --border-color: #334155;
 
@@ -70,6 +74,8 @@
     /* Keep brand colors visible in dark mode */
     --primary: color-mix(in srgb, var(--primary-base) 55%, var(--text-color));
     --secondary: color-mix(in srgb, var(--secondary-base) 55%, var(--text-color));
+    --gov-primary: #38BDF8;
+    --gov-primary-hover: #0284C7;
 
     /* Ensure muted elements (icons/placeholders) stay visible */
     --gray-400: #94A3B8;

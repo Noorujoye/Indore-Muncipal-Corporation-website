@@ -16,9 +16,14 @@ import {
     CheckCircle,
     FileText
 } from 'lucide-react';
-import apiClient from '../../services/apiClient';
+import apiClient, { authStorage } from '../../services/apiClient';
+import { clearCachedMe } from '../auth/ProtectedRoute';
+import ThemeToggle from '../common/ThemeToggle';
+import LanguageToggle from '../common/LanguageToggle';
+import { useTranslation } from 'react-i18next';
 
 const IMCDashboardLayout = () => {
+    const { t } = useTranslation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [userRole, setUserRole] = useState('CREATOR');
@@ -94,154 +99,147 @@ const IMCDashboardLayout = () => {
     }, [isProfileOpen]);
 
     const handleLogout = () => {
+        setIsProfileOpen(false);
+        setIsSidebarOpen(false);
         apiClient.post('/auth/logout').catch(() => undefined);
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('imc_role');
-        localStorage.removeItem('user_name');
-        localStorage.removeItem('user_role');
-        localStorage.removeItem('vendor_name');
+        authStorage.clearAuthStorage();
+        clearCachedMe();
         navigate('/');
     };
 
     const getNavItems = (role) => {
         if (role === 'VERIFIER') {
             return [
-                { path: '/imc/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-                { path: '/imc/queue', label: 'Invoices for Verification', icon: ListFilter },
-                { path: '/imc/returned', label: 'Returned from Approver', icon: AlertCircle },
-                { path: '/imc/history', label: 'Verification History', icon: CheckCircle },
-                { path: '/imc/guidelines', label: 'Guidelines', icon: FileText }
+                { path: '/imc/dashboard', label: t('imcLayout.nav.dashboard'), icon: LayoutDashboard },
+                { path: '/imc/queue', label: t('imcLayout.nav.queueVerification'), icon: ListFilter },
+                { path: '/imc/returned', label: t('imcLayout.nav.returned'), icon: AlertCircle },
+                { path: '/imc/history', label: t('imcLayout.nav.verificationHistory'), icon: CheckCircle },
+                { path: '/imc/guidelines', label: t('imcLayout.nav.guidelines'), icon: FileText }
             ];
         }
         if (role === 'APPROVER') {
             return [
-                { path: '/imc/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-                { path: '/imc/queue', label: 'Invoices for Approval', icon: ListFilter },
-                { path: '/imc/approved', label: 'Approved (Ready for Payment)', icon: CheckCircle },
-                { path: '/imc/rejected', label: 'Rejected Invoices', icon: AlertCircle },
-                { path: '/imc/history', label: 'Approval History', icon: FileText }
+                { path: '/imc/dashboard', label: t('imcLayout.nav.dashboard'), icon: LayoutDashboard },
+                { path: '/imc/queue', label: t('imcLayout.nav.queueApproval'), icon: ListFilter },
+                { path: '/imc/approved', label: t('imcLayout.nav.approved'), icon: CheckCircle },
+                { path: '/imc/rejected', label: t('imcLayout.nav.rejected'), icon: AlertCircle },
+                { path: '/imc/history', label: t('imcLayout.nav.approvalHistory'), icon: FileText }
             ];
         }
-        
-        return [
-            { path: '/imc/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-            { path: '/imc/queue', label: 'Invoices Queue', icon: ListFilter },
-            { path: '/imc/vendors', label: 'New Requests', icon: User },
-            { path: '/imc/directory', label: 'Vendor Directory', icon: Building },
-            { path: '/imc/history', label: 'Action History', icon: CheckCircle },
-            { path: '/imc/reports', label: 'Reports', icon: FileBarChart },
-        ];
 
+        return [
+            { path: '/imc/dashboard', label: t('imcLayout.nav.dashboard'), icon: LayoutDashboard },
+            { path: '/imc/queue', label: t('imcLayout.nav.queue'), icon: ListFilter },
+            { path: '/imc/vendors', label: t('imcLayout.nav.vendors'), icon: User },
+            { path: '/imc/directory', label: t('imcLayout.nav.directory'), icon: Building },
+            { path: '/imc/history', label: t('imcLayout.nav.history'), icon: CheckCircle },
+            { path: '/imc/reports', label: t('imcLayout.nav.reports'), icon: FileBarChart },
+        ];
     };
 
     const navItems = getNavItems(userRole);
 
     const getRoleLabel = (role) => {
         switch (role) {
-            case 'CREATOR': return 'Invoice Creator';
-            case 'VERIFIER': return 'Invoice Verifier';
-            case 'APPROVER': return 'Final Approver';
-            default: return 'IMC Official';
+            case 'CREATOR': return t('imcLayout.roles.CREATOR');
+            case 'VERIFIER': return t('imcLayout.roles.VERIFIER');
+            case 'APPROVER': return t('imcLayout.roles.APPROVER');
+            default: return t('imcLayout.roles.OFFICIAL');
         }
     };
 
     return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#F1F5F9', display: 'flex', flexDirection: 'column' }}>
-
-            <header style={{
-                height: '60px',
-                backgroundColor: 'white',
-                borderBottom: '1px solid #E2E8F0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0 1.5rem',
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                zIndex: 50,
-                boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div className="portal-layout">
+            <header className="portal-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <button
-                        className="md:hidden"
+                        className="mobile-only touch-target"
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#334155' }}
+                        aria-label="Toggle navigation drawer"
+                        style={{
+                            border: '1px solid var(--border-color)',
+                            backgroundColor: 'transparent',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            color: 'var(--text-color)',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '0.4rem'
+                        }}
                     >
-                        {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+                        {isSidebarOpen ? <X size={22} /> : <Menu size={22} />}
                     </button>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <img src="/imc-logo-enhanced.png" alt="IMC" style={{ height: '32px' }} />
-                        <div className="hidden sm:block" style={{ lineHeight: 1.1 }}>
-                            <div style={{ fontWeight: 700, color: '#0F172A', fontSize: '0.85rem' }}>INDORE MUNICIPAL CORPORATION</div>
-                            <div style={{ fontSize: '0.7rem', color: '#64748B', letterSpacing: '0.5px' }}>OFFICIAL PORTAL</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <img src="/imc-logo-enhanced.png" alt="IMC" style={{ height: '34px' }} />
+                        <div className="desktop-only" style={{ flexDirection: 'column', lineHeight: 1.15 }}>
+                            <div style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '0.85rem' }}>{t('brand.org')}</div>
+                            <div style={{ fontSize: '0.68rem', color: 'var(--gray-600)', letterSpacing: '0.04em' }}>{t('brand.officialPortal')}</div>
                         </div>
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                    <div className="hidden sm:flex" style={{
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div className="desktop-only" style={{
                         alignItems: 'center', gap: '0.5rem',
                         padding: '0.25rem 0.75rem',
-                        backgroundColor: '#F1F5F9',
+                        backgroundColor: 'var(--gray-100)',
                         borderRadius: '4px',
-                        border: '1px solid #E2E8F0'
+                        border: '1px solid var(--border-color)'
                     }}>
-                        <Shield size={14} color="#475569" />
+                        <Shield size={14} color="var(--gray-600)" />
                         <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
                             <span style={{
                                 fontSize: '0.6rem',
                                 fontWeight: 800,
-                                color: '#64748B',
+                                color: 'var(--gray-600)',
                                 letterSpacing: '0.08em',
                                 textTransform: 'uppercase'
                             }}>
-                                Authority
+                                {t('imcLayout.authority')}
                             </span>
-                            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#334155' }}>
+                            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-color)' }}>
                                 {getRoleLabel(userRole)}
                             </span>
                         </div>
                     </div>
 
-                    <button style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#64748B' }}>
-                        <Bell size={20} />
-                    </button>
+                    <LanguageToggle />
+                    <ThemeToggle />
 
                     <div ref={profileRef} style={{ position: 'relative' }}>
                         <button
                             onClick={() => setIsProfileOpen(!isProfileOpen)}
+                            className="touch-target"
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '0.75rem',
+                                gap: '0.5rem',
                                 border: 'none',
                                 background: 'none',
                                 cursor: 'pointer',
-                                padding: '0.25rem',
-                                borderRadius: '4px'
+                                padding: '0.25rem 0.5rem',
+                                borderRadius: '6px',
+                                color: 'var(--text-color)'
                             }}
                         >
-                            <div className="hidden sm:block" style={{ textAlign: 'right' }}>
-                                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1E293B' }}>{userName || 'IMC User'}</div>
-                                <div style={{ fontSize: '0.7rem', color: '#64748B' }}>{getRoleLabel(userRole)}</div>
+                            <div className="desktop-only" style={{ textAlign: 'right', flexDirection: 'column' }}>
+                                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-color)' }}>{userName || 'IMC User'}</div>
+                                <div style={{ fontSize: '0.7rem', color: 'var(--gray-600)' }}>{getRoleLabel(userRole)}</div>
                             </div>
                             <div style={{
                                 width: '32px',
                                 height: '32px',
                                 borderRadius: '50%',
-                                backgroundColor: '#E2E8F0',
+                                backgroundColor: 'var(--gray-200)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                color: '#475569'
+                                color: 'var(--gray-600)'
                             }}>
                                 <User size={18} />
                             </div>
-                            <ChevronDown size={14} color="#94A3B8" />
+                            <ChevronDown size={14} color="var(--gray-400)" />
                         </button>
 
                         {isProfileOpen && (
@@ -251,10 +249,10 @@ const IMCDashboardLayout = () => {
                                 right: 0,
                                 marginTop: '0.5rem',
                                 width: '200px',
-                                backgroundColor: 'white',
-                                borderRadius: '4px',
-                                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
-                                border: '1px solid #E2E8F0',
+                                backgroundColor: 'var(--card-bg)',
+                                borderRadius: '6px',
+                                boxShadow: 'var(--shadow-lg)',
+                                border: '1px solid var(--border-color)',
                                 padding: '0.5rem',
                                 zIndex: 60
                             }}>
@@ -271,10 +269,11 @@ const IMCDashboardLayout = () => {
                                         cursor: 'pointer',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: '0.5rem'
+                                        gap: '0.5rem',
+                                        borderRadius: '4px'
                                     }}
                                 >
-                                    <LogOut size={16} /> Logout
+                                    <LogOut size={16} /> {t('common.logout')}
                                 </button>
                             </div>
                         )}
@@ -282,25 +281,13 @@ const IMCDashboardLayout = () => {
                 </div>
             </header>
 
-            <div style={{ display: 'flex', flex: 1, marginTop: '60px' }}>
-                <aside style={{
-                    width: '250px',
-                    backgroundColor: '#1E293B', 
-                    borderRight: '1px solid #0F172A',
-                    position: 'fixed',
-                    top: '60px',
-                    bottom: 0,
-                    left: 0,
-                    zIndex: 40,
-                    transform: isSidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
-                    transition: 'transform 0.3s ease-in-out',
-                    '@media (min-width: 768px)': { transform: 'translateX(0)' }
-                }} className={`fixed md:relative md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                    <nav style={{ padding: '1.5rem 0.75rem' }}>
-                        <div style={{ paddingBottom: '1rem', marginBottom: '1rem', borderBottom: '1px solid #334155', paddingLeft: '0.5rem', fontSize: '0.75rem', color: '#94A3B8', fontWeight: 600, letterSpacing: '0.05em' }}>
-                            MAIN NAVIGATION
+            <div className="portal-body">
+                <aside className={`portal-sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
+                    <nav style={{ padding: '1.25rem 0.75rem', display: 'flex', flexDirection: 'column', height: '100%' }}>
+                        <div style={{ paddingBottom: '0.75rem', marginBottom: '0.75rem', borderBottom: '1px solid var(--border-color)', paddingLeft: '0.5rem', fontSize: '0.75rem', color: 'var(--gray-600)', fontWeight: 700, letterSpacing: '0.05em' }}>
+                            {t('imcLayout.mainNavigation')}
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                             {navItems.map((item) => (
                                 <NavLink
                                     key={item.path}
@@ -310,14 +297,15 @@ const IMCDashboardLayout = () => {
                                         display: 'flex',
                                         alignItems: 'center',
                                         gap: '0.75rem',
-                                        padding: '0.6rem 1rem',
-                                        borderRadius: '4px',
+                                        padding: '0.65rem 1rem',
+                                        borderRadius: '6px',
                                         textDecoration: 'none',
-                                        fontSize: '0.9rem',
-                                        fontWeight: 500,
-                                        color: isActive ? 'white' : '#CBD5E1', 
-                                        backgroundColor: isActive ? '#003366' : 'transparent', 
-                                        transition: 'background-color 0.15s',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 600,
+                                        minHeight: '44px',
+                                        color: isActive ? 'white' : 'var(--gray-600)',
+                                        backgroundColor: isActive ? 'var(--primary)' : 'transparent',
+                                        transition: 'all 0.15s',
                                         borderLeft: isActive ? '3px solid #38BDF8' : '3px solid transparent'
                                     })}
                                 >
@@ -326,23 +314,40 @@ const IMCDashboardLayout = () => {
                                 </NavLink>
                             ))}
                         </div>
+
+                        <div style={{ marginTop: 'auto', paddingTop: '1.5rem', borderTop: '1px solid var(--border-color)' }}>
+                            <button
+                                onClick={handleLogout}
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.75rem',
+                                    padding: '0.65rem 1rem',
+                                    borderRadius: '6px',
+                                    border: 'none',
+                                    background: 'none',
+                                    cursor: 'pointer',
+                                    color: '#EF4444',
+                                    fontSize: '0.875rem',
+                                    fontWeight: 600,
+                                    minHeight: '44px'
+                                }}
+                            >
+                                <LogOut size={18} /> {t('common.logout')}
+                            </button>
+                        </div>
                     </nav>
                 </aside>
 
-                <main style={{
-                    flex: 1,
-                    padding: '2rem',
-                    marginLeft: '0',
-                    '@media (min-width: 768px)': { marginLeft: '250px' }
-                }} className="md:ml-[250px] w-full">
+                <main className="portal-main">
                     <Outlet />
                 </main>
             </div>
 
             {isSidebarOpen && (
                 <div
-                    className="md:hidden"
-                    style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 30 }}
+                    className="portal-backdrop"
                     onClick={() => setIsSidebarOpen(false)}
                 />
             )}

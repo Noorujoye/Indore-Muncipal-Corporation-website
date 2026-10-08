@@ -145,6 +145,7 @@ const VendorRegistration = () => {
     };
 
     const handleSubmit = async () => {
+        if (loading) return;
         if (!validatePhase3()) return;
 
         setLoading(true);
@@ -201,8 +202,8 @@ const VendorRegistration = () => {
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-color)' }}>
             <Navbar
                 onLoginClick={() => { }}
-                showThemeToggle={false}
-                showLanguageToggle={false}
+                showThemeToggle={true}
+                showLanguageToggle={true}
             />
 
             <Modal
@@ -261,7 +262,7 @@ const VendorRegistration = () => {
                 </div>
             </Modal>
 
-            <main style={{ flex: 1, padding: '2.5rem 1rem' }}>
+            <main style={{ flex: 1, padding: 'clamp(1rem, 3vw, 2.5rem) clamp(0.75rem, 2vw, 1.5rem)' }}>
                 <div style={{
                     maxWidth: '900px',
                     margin: '0 auto',
@@ -269,7 +270,7 @@ const VendorRegistration = () => {
                     borderRadius: '16px',
                     boxShadow: 'var(--shadow-lg)',
                     border: '1px solid var(--border-color)',
-                    padding: '2.25rem'
+                    padding: 'clamp(1.25rem, 4vw, 2.25rem)'
                 }}>
                     <MessageBanner
                         variant={banner?.variant}
@@ -380,23 +381,29 @@ const VendorRegistration = () => {
                         marginTop: '3rem',
                         display: 'flex',
                         justifyContent: currentStep > 1 ? 'space-between' : 'flex-end',
-                        borderTop: '1px solid #E2E8F0',
+                        alignItems: 'center',
+                        gap: '1rem',
+                        flexWrap: 'wrap',
+                        borderTop: '1px solid var(--border-color)',
                         paddingTop: '2rem'
                     }}>
                         {currentStep > 1 && (
                             <button
                                 type="button"
+                                disabled={loading}
                                 onClick={() => setCurrentStep(prev => Math.max(1, prev - 1))}
                                 style={{
-                                    padding: '0.875rem 2.5rem',
+                                    padding: '0.875rem clamp(1.25rem, 3vw, 2.5rem)',
                                     borderRadius: '8px',
                                     border: '1px solid var(--border-color)',
                                     background: 'var(--card-bg)',
                                     color: 'var(--text-color)',
-                                    cursor: 'pointer',
+                                    cursor: loading ? 'not-allowed' : 'pointer',
                                     fontWeight: 600,
                                     fontSize: '1rem',
-                                    transition: 'all 0.2s'
+                                    transition: 'all 0.2s',
+                                    minHeight: '44px',
+                                    opacity: loading ? 0.6 : 1
                                 }}
                             >
                                 {t('common.back')}
@@ -405,24 +412,30 @@ const VendorRegistration = () => {
 
                         <button
                             type="button"
+                            disabled={loading}
                             onClick={currentStep === 3 ? handleSubmit : handleNext}
                             style={{
-                                padding: '0.875rem 2.5rem',
+                                padding: '0.875rem clamp(1.5rem, 4vw, 2.5rem)',
                                 borderRadius: '8px',
                                 background: 'var(--primary)',
                                 color: 'white',
                                 border: 'none',
-                                cursor: 'pointer',
+                                cursor: loading ? 'not-allowed' : 'pointer',
                                 fontWeight: 600,
                                 fontSize: '1rem',
                                 boxShadow: 'var(--shadow-md)',
                                 transition: 'all 0.2s',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '0.5rem'
+                                justifyContent: 'center',
+                                gap: '0.5rem',
+                                minHeight: '44px',
+                                opacity: loading ? 0.7 : 1
                             }}
                         >
-                            {currentStep === 3 ? t('vendorReg.submitApplication') : t('vendorReg.nextStep')}
+                            {loading && currentStep === 3
+                                ? 'Submitting Application...'
+                                : (currentStep === 3 ? t('vendorReg.submitApplication') : t('vendorReg.nextStep'))}
                         </button>
                     </div>
 

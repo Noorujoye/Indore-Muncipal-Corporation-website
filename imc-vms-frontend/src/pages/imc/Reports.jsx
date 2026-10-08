@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Download, Calendar, Filter, FileBarChart, RefreshCw } from 'lucide-react';
 import apiClient from '../../services/apiClient';
 import StatusBadge from '../../components/common/StatusBadge';
 import PageHeader from '../../components/common/PageHeader';
+import MessageBanner from '../../components/common/MessageBanner';
 
 const Reports = () => {
+    const { t } = useTranslation();
     const [invoices, setInvoices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [exporting, setExporting] = useState(false);
+    const [exportError, setExportError] = useState('');
     const [dateRange, setDateRange] = useState('30'); // '30', '90', 'ALL'
     const [statusFilter, setStatusFilter] = useState('ALL');
 
@@ -55,6 +59,7 @@ const Reports = () => {
     const handleExportCsv = async () => {
         if (exporting) return;
         setExporting(true);
+        setExportError('');
         try {
             const datePayload = getDateFilterPayload(dateRange);
             const payload = { ...datePayload };
@@ -77,7 +82,7 @@ const Reports = () => {
             setTimeout(() => window.URL.revokeObjectURL(url), 1000);
         } catch (err) {
             console.error('CSV export failed', err);
-            alert('Failed to export CSV. Please try again.');
+            setExportError(t('reports.exportFailed'));
         } finally {
             setExporting(false);
         }
@@ -96,185 +101,231 @@ const Reports = () => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                    <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>
-                        Reports & Analytics
+                    <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-color, #0F172A)', margin: 0 }}>
+                        {t('reports.title')}
                     </h1>
-                    <p style={{ margin: '0.25rem 0 0 0', color: '#64748B', fontSize: '0.9rem' }}>
-                        Live invoice financial records, processing analytics, and official exports.
+                    <p style={{ margin: '0.25rem 0 0 0', color: 'var(--text-muted, #64748B)', fontSize: '0.9rem' }}>
+                        {t('reports.subtitle')}
                     </p>
                 </div>
 
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '0.25rem 0.5rem', gap: '0.5rem' }}>
-                        <Calendar size={16} color="#64748B" />
+                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'var(--card-bg, #ffffff)', border: '1px solid var(--border-color, #E2E8F0)', borderRadius: '8px', padding: '0.35rem 0.65rem', gap: '0.5rem', minHeight: '44px', boxSizing: 'border-box' }}>
+                        <Calendar size={16} color="var(--text-muted, #64748B)" />
                         <select
                             value={dateRange}
                             onChange={(e) => setDateRange(e.target.value)}
-                            style={{ border: 'none', background: 'transparent', fontSize: '0.875rem', color: '#334155', fontWeight: 500, cursor: 'pointer', outline: 'none' }}
+                            style={{ border: 'none', background: 'transparent', fontSize: '0.9rem', color: 'var(--text-color, #334155)', fontWeight: 500, cursor: 'pointer', outline: 'none' }}
                         >
-                            <option value="30">Last 30 Days</option>
-                            <option value="90">Last 90 Days</option>
-                            <option value="ALL">All Time</option>
+                            <option value="30">{t('reports.last30Days')}</option>
+                            <option value="90">{t('reports.last90Days')}</option>
+                            <option value="ALL">{t('reports.allTime')}</option>
                         </select>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '0.25rem 0.5rem', gap: '0.5rem' }}>
-                        <Filter size={16} color="#64748B" />
+                    <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'var(--card-bg, #ffffff)', border: '1px solid var(--border-color, #E2E8F0)', borderRadius: '8px', padding: '0.35rem 0.65rem', gap: '0.5rem', minHeight: '44px', boxSizing: 'border-box' }}>
+                        <Filter size={16} color="var(--text-muted, #64748B)" />
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            style={{ border: 'none', background: 'transparent', fontSize: '0.875rem', color: '#334155', fontWeight: 500, cursor: 'pointer', outline: 'none' }}
+                            style={{ border: 'none', background: 'transparent', fontSize: '0.9rem', color: 'var(--text-color, #334155)', fontWeight: 500, cursor: 'pointer', outline: 'none' }}
                         >
-                            <option value="ALL">All Statuses</option>
-                            <option value="SUBMITTED">Submitted</option>
-                            <option value="CREATOR_APPROVED">Creator Approved</option>
-                            <option value="VERIFIER_APPROVED">Verifier Approved</option>
-                            <option value="READY_FOR_PAYMENT">Ready for Payment</option>
-                            <option value="PAID">Paid</option>
-                            <option value="CREATOR_REJECTED">Creator Rejected</option>
-                            <option value="VERIFIER_REJECTED">Verifier Rejected</option>
-                            <option value="APPROVER_REJECTED">Approver Rejected</option>
+                            <option value="ALL">{t('reports.allStatuses')}</option>
+                            <option value="SUBMITTED">{t('common.status.submitted', { defaultValue: 'Submitted' })}</option>
+                            <option value="CREATOR_APPROVED">{t('common.status.creatorApproved', { defaultValue: 'Creator Approved' })}</option>
+                            <option value="VERIFIER_APPROVED">{t('common.status.verifierApproved', { defaultValue: 'Verifier Approved' })}</option>
+                            <option value="READY_FOR_PAYMENT">{t('common.status.readyForPayment', { defaultValue: 'Ready for Payment' })}</option>
+                            <option value="PAID">{t('common.status.paid', { defaultValue: 'Paid' })}</option>
+                            <option value="CREATOR_REJECTED">{t('common.status.creatorRejected', { defaultValue: 'Creator Rejected' })}</option>
+                            <option value="VERIFIER_REJECTED">{t('common.status.verifierRejected', { defaultValue: 'Verifier Rejected' })}</option>
+                            <option value="APPROVER_REJECTED">{t('common.status.approverRejected', { defaultValue: 'Approver Rejected' })}</option>
                         </select>
                     </div>
 
                     <button
                         onClick={handleExportCsv}
                         disabled={exporting || loading || invoices.length === 0}
+                        className="touch-target"
                         style={{
                             display: 'flex', alignItems: 'center', gap: '0.5rem',
-                            padding: '0.5rem 1rem', backgroundColor: '#0A3D62',
+                            minHeight: '44px',
+                            padding: '0.5rem 1.25rem', backgroundColor: '#0A3D62',
                             border: 'none', borderRadius: '8px', color: 'white', fontWeight: 600,
                             cursor: (exporting || loading || invoices.length === 0) ? 'not-allowed' : 'pointer',
                             opacity: (exporting || loading || invoices.length === 0) ? 0.6 : 1,
                         }}
                     >
-                        <Download size={16} /> {exporting ? 'Exporting...' : 'Export CSV'}
+                        <Download size={16} /> {exporting ? t('reports.exporting') : t('reports.exportCsv')}
                     </button>
                 </div>
             </div>
 
+            {exportError && (
+                <div style={{ marginBottom: '1.5rem' }}>
+                    <MessageBanner
+                        variant="error"
+                        message={exportError}
+                        onClose={() => setExportError('')}
+                    />
+                </div>
+            )}
+
             {/* KPI Summary Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
                 <div className="gov-card" style={{ borderLeft: '4px solid #0A3D62' }}>
-                    <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600, textTransform: 'uppercase' }}>
-                        Total Invoices
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted, #64748B)', fontWeight: 600, textTransform: 'uppercase' }}>
+                        {t('reports.totalInvoices')}
                     </div>
-                    <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A', margin: '0.35rem 0' }}>
+                    <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-color, #0F172A)', margin: '0.35rem 0' }}>
                         {totalCount}
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: '#64748B' }}>
-                        {dateRange === 'ALL' ? 'All records in system' : `In last ${dateRange} days`}
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted, #64748B)' }}>
+                        {dateRange === 'ALL' ? t('reports.allRecords') : t('reports.inLastDays', { days: dateRange })}
                     </div>
                 </div>
 
                 <div className="gov-card" style={{ borderLeft: '4px solid #2563EB' }}>
-                    <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600, textTransform: 'uppercase' }}>
-                        Total Value (₹)
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted, #64748B)', fontWeight: 600, textTransform: 'uppercase' }}>
+                        {t('reports.totalValue')}
                     </div>
-                    <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A', margin: '0.35rem 0' }}>
+                    <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-color, #0F172A)', margin: '0.35rem 0' }}>
                         ₹ {totalAmount.toLocaleString()}
                     </div>
                     <div style={{ fontSize: '0.8rem', color: '#2563EB' }}>
-                        Cumulative gross amount
+                        {t('reports.cumulativeAmount')}
                     </div>
                 </div>
 
                 <div className="gov-card" style={{ borderLeft: '4px solid #10B981' }}>
-                    <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600, textTransform: 'uppercase' }}>
-                        Settled & Paid
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted, #64748B)', fontWeight: 600, textTransform: 'uppercase' }}>
+                        {t('reports.settledAndPaid')}
                     </div>
-                    <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A', margin: '0.35rem 0' }}>
+                    <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-color, #0F172A)', margin: '0.35rem 0' }}>
                         ₹ {paidAmount.toLocaleString()}
                     </div>
                     <div style={{ fontSize: '0.8rem', color: '#10B981' }}>
-                        {paidInvoices.length} paid invoices
+                        {t('reports.paidCount', { count: paidInvoices.length })}
                     </div>
                 </div>
 
                 <div className="gov-card" style={{ borderLeft: '4px solid #F59E0B' }}>
-                    <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600, textTransform: 'uppercase' }}>
-                        In Progress
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted, #64748B)', fontWeight: 600, textTransform: 'uppercase' }}>
+                        {t('reports.inProgress')}
                     </div>
-                    <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A', margin: '0.35rem 0' }}>
+                    <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-color, #0F172A)', margin: '0.35rem 0' }}>
                         {pendingInvoices.length}
                     </div>
                     <div style={{ fontSize: '0.8rem', color: '#F59E0B' }}>
-                        Awaiting review / payment
+                        {t('reports.awaitingReview')}
                     </div>
                 </div>
 
                 <div className="gov-card" style={{ borderLeft: '4px solid #EF4444' }}>
-                    <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600, textTransform: 'uppercase' }}>
-                        Rejection Rate
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted, #64748B)', fontWeight: 600, textTransform: 'uppercase' }}>
+                        {t('reports.rejectionRate')}
                     </div>
-                    <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A', margin: '0.35rem 0' }}>
+                    <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-color, #0F172A)', margin: '0.35rem 0' }}>
                         {rejectionRate}%
                     </div>
                     <div style={{ fontSize: '0.8rem', color: '#EF4444' }}>
-                        {rejectedInvoices.length} rejected invoices
+                        {t('reports.rejectedCount', { count: rejectedInvoices.length })}
                     </div>
                 </div>
             </div>
 
-            {/* Invoices Report Table */}
+            {/* Invoices Report Table / Cards */}
             <div className="gov-table-container">
-                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h3 style={{ margin: 0, fontSize: '1rem', color: '#334155', fontWeight: 600 }}>
-                        Invoice Records ({invoices.length})
+                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-color, #E2E8F0)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h3 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-color, #334155)', fontWeight: 600 }}>
+                        {t('reports.invoiceRecords', { count: invoices.length })}
                     </h3>
                     <button
                         onClick={fetchReport}
                         disabled={loading}
-                        style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', fontSize: '0.85rem' }}
+                        className="touch-target"
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'none', border: 'none', color: 'var(--text-muted, #64748B)', cursor: 'pointer', fontSize: '0.85rem', padding: '0.5rem' }}
                     >
-                        <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Refresh
+                        <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> {t('reports.refresh')}
                     </button>
                 </div>
 
                 {loading ? (
-                    <div style={{ padding: '3rem', textAlign: 'center', color: '#64748B' }}>
-                        Loading report data...
+                    <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted, #64748B)' }}>
+                        {t('reports.loading')}
                     </div>
                 ) : invoices.length > 0 ? (
-                    <table className="gov-table">
-                        <thead>
-                            <tr>
-                                <th>INVOICE #</th>
-                                <th>VENDOR NAME</th>
-                                <th>TENDER REF</th>
-                                <th>TOTAL AMOUNT (₹)</th>
-                                <th>STATUS</th>
-                                <th>SUBMITTED DATE</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <>
+                        <div className="desktop-only">
+                            <table className="gov-table">
+                                <thead>
+                                    <tr>
+                                        <th>{t('reports.table.invoiceNumber')}</th>
+                                        <th>{t('reports.table.vendorName')}</th>
+                                        <th>{t('reports.table.tenderRef')}</th>
+                                        <th>{t('reports.table.totalAmount')}</th>
+                                        <th>{t('reports.table.status')}</th>
+                                        <th>{t('reports.table.submittedDate')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {invoices.map((inv) => (
+                                        <tr key={inv.invoiceId}>
+                                            <td style={{ fontWeight: 600, color: 'var(--text-color, #0F172A)' }}>
+                                                {inv.vendorInvoiceNumber}
+                                            </td>
+                                            <td>{inv.vendorName}</td>
+                                            <td style={{ fontFamily: 'monospace', color: 'var(--text-muted, #64748B)' }}>
+                                                {inv.tenderReference || '-'}
+                                            </td>
+                                            <td style={{ fontWeight: 600 }}>
+                                                ₹ {Number(inv.totalAmount || 0).toLocaleString()}
+                                            </td>
+                                            <td>
+                                                <StatusBadge status={inv.status} />
+                                            </td>
+                                            <td style={{ color: 'var(--text-muted, #64748B)' }}>
+                                                {inv.submittedAt && !Number.isNaN(new Date(inv.submittedAt).getTime())
+                                                    ? new Date(inv.submittedAt).toLocaleDateString()
+                                                    : '-'}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div className="mobile-only mobile-card-list" style={{ padding: '0.75rem' }}>
                             {invoices.map((inv) => (
-                                <tr key={inv.invoiceId}>
-                                    <td style={{ fontWeight: 600, color: '#0F172A' }}>
-                                        {inv.vendorInvoiceNumber}
-                                    </td>
-                                    <td>{inv.vendorName}</td>
-                                    <td style={{ fontFamily: 'monospace', color: '#64748B' }}>
-                                        {inv.tenderReference || '-'}
-                                    </td>
-                                    <td style={{ fontWeight: 600 }}>
-                                        ₹ {Number(inv.totalAmount || 0).toLocaleString()}
-                                    </td>
-                                    <td>
+                                <div key={inv.invoiceId} className="mobile-data-card">
+                                    <div className="mobile-data-card__row">
+                                        <span style={{ fontWeight: 700, color: 'var(--text-color, #0F172A)' }}>
+                                            {inv.vendorInvoiceNumber}
+                                        </span>
                                         <StatusBadge status={inv.status} />
-                                    </td>
-                                    <td style={{ color: '#64748B' }}>
-                                        {inv.submittedAt && !Number.isNaN(new Date(inv.submittedAt).getTime())
-                                            ? new Date(inv.submittedAt).toLocaleDateString()
-                                            : '-'}
-                                    </td>
-                                </tr>
+                                    </div>
+                                    <div style={{ fontWeight: 600, color: 'var(--text-color, #0F172A)', margin: '0.35rem 0' }}>
+                                        {inv.vendorName}
+                                    </div>
+                                    <div className="mobile-data-card__row" style={{ fontSize: '0.9rem', color: 'var(--text-muted, #64748B)' }}>
+                                        <span>Amount: <strong style={{ color: 'var(--text-color, #0F172A)' }}>₹{Number(inv.totalAmount || 0).toLocaleString()}</strong></span>
+                                        <span>
+                                            {inv.submittedAt && !Number.isNaN(new Date(inv.submittedAt).getTime())
+                                                ? new Date(inv.submittedAt).toLocaleDateString()
+                                                : '-'}
+                                        </span>
+                                    </div>
+                                    {inv.tenderReference && (
+                                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted, #64748B)', fontFamily: 'monospace', marginTop: '0.25rem' }}>
+                                            Tender: {inv.tenderReference}
+                                        </div>
+                                    )}
+                                </div>
                             ))}
-                        </tbody>
-                    </table>
+                        </div>
+                    </>
                 ) : (
-                    <div style={{ padding: '3rem', textAlign: 'center', color: '#94A3B8' }}>
-                        No invoice records found for the selected period and status.
+                    <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted, #94A3B8)' }}>
+                        {t('reports.empty')}
                     </div>
                 )}
             </div>

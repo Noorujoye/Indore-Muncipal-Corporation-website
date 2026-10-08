@@ -1,4 +1,4 @@
-﻿import { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Truck, Building2, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -59,30 +59,31 @@ const LoginModal = ({ isOpen, onClose }) => {
                     exit={{ scale: 0.95, opacity: 0, y: 20 }}
                     transition={{ duration: 0.2 }}
                     style={{
-                        backgroundColor: 'white',
+                        backgroundColor: 'var(--card-bg)',
                         borderRadius: '16px',
-                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                        boxShadow: 'var(--shadow-xl, 0 25px 50px -12px rgba(0, 0, 0, 0.25))',
                         width: '100%',
                         maxWidth: '600px',
-                        overflow: 'hidden',
-                        border: '1px solid rgba(226, 232, 240, 0.8)',
+                        maxHeight: '90vh',
+                        overflowY: 'auto',
+                        border: '1px solid var(--border-color)',
                     }}
                     ref={modalRef}
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div style={{
-                        padding: '1.5rem 2rem',
-                        borderBottom: '1px solid #F1F5F9',
+                        padding: '1.25rem clamp(1rem, 3vw, 2rem)',
+                        borderBottom: '1px solid var(--border-color)',
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        backgroundColor: '#FAFAFA'
+                        backgroundColor: 'var(--gray-100)'
                     }}>
                         <div>
-                            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.25rem' }}>
+                            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-color)', marginBottom: '0.25rem' }}>
                                 {t('auth.loginToSystem')}
                             </h2>
-                            <p style={{ fontSize: '0.875rem', color: '#64748B' }}>
+                            <p style={{ fontSize: '0.875rem', color: 'var(--gray-600)' }}>
                                 {t('auth.selectRole')}
                             </p>
                         </div>
@@ -92,27 +93,29 @@ const LoginModal = ({ isOpen, onClose }) => {
                                 background: 'transparent',
                                 border: 'none',
                                 cursor: 'pointer',
-                                color: '#94A3B8',
+                                color: 'var(--gray-600)',
                                 padding: '0.5rem',
                                 borderRadius: '50%',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                transition: 'all 0.2s'
+                                transition: 'all 0.2s',
+                                minWidth: '40px',
+                                minHeight: '40px'
                             }}
-                            onMouseOver={(e) => { e.target.style.backgroundColor = '#F1F5F9'; e.target.style.color = '#EF4444'; }}
-                            onMouseOut={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#94A3B8'; }}
+                            onMouseOver={(e) => { e.currentTarget.style.backgroundColor = 'var(--gray-200)'; e.currentTarget.style.color = 'var(--gov-danger, #EF4444)'; }}
+                            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--gray-600)'; }}
                         >
                             <X size={20} />
                         </button>
                     </div>
 
-                    <div style={{ padding: '2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                    <div style={{ padding: 'clamp(1rem, 3vw, 2rem)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '1.25rem' }}>
 
                         <div
                             style={{
                                 padding: '1.5rem',
-                                border: '1px solid #E2E8F0',
+                                border: '1px solid var(--border-color)',
                                 borderRadius: '12px',
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -120,15 +123,15 @@ const LoginModal = ({ isOpen, onClose }) => {
                                 textAlign: 'center',
                                 cursor: 'pointer',
                                 transition: 'all 0.2s',
-                                backgroundColor: 'white'
+                                backgroundColor: 'var(--card-bg)'
                             }}
                             onMouseOver={(e) => {
-                                e.currentTarget.style.borderColor = '#0A3D62';
+                                e.currentTarget.style.borderColor = 'var(--primary)';
                                 e.currentTarget.style.transform = 'translateY(-2px)';
-                                e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.05)';
+                                e.currentTarget.style.boxShadow = 'var(--shadow-md)';
                             }}
                             onMouseOut={(e) => {
-                                e.currentTarget.style.borderColor = '#E2E8F0';
+                                e.currentTarget.style.borderColor = 'var(--border-color)';
                                 e.currentTarget.style.transform = 'translateY(0)';
                                 e.currentTarget.style.boxShadow = 'none';
                             }}
@@ -137,29 +140,29 @@ const LoginModal = ({ isOpen, onClose }) => {
                             <div style={{
                                 width: '56px',
                                 height: '56px',
-                                backgroundColor: '#EFF6FF',
+                                backgroundColor: 'color-mix(in srgb, var(--primary) 12%, transparent)',
                                 borderRadius: '50%',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 marginBottom: '1rem',
-                                color: '#0A3D62'
+                                color: 'var(--primary)'
                             }}>
                                 <Truck size={28} />
                             </div>
-                            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#1E293B', marginBottom: '0.5rem' }}>
+                            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text-color)', marginBottom: '0.5rem' }}>
                                 {t('auth.vendorLogin')}
                             </h3>
-                            <p style={{ fontSize: '0.875rem', color: '#64748B', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+                            <p style={{ fontSize: '0.875rem', color: 'var(--gray-600)', marginBottom: '1.5rem', lineHeight: 1.5 }}>
                                 {t('auth.vendorLoginDesc')}
                             </p>
                             <button style={{
                                 width: '100%',
                                 padding: '0.75rem',
                                 borderRadius: '8px',
-                                border: '1px solid #0A3D62',
-                                backgroundColor: 'white',
-                                color: '#0A3D62',
+                                border: '1px solid var(--primary)',
+                                backgroundColor: 'transparent',
+                                color: 'var(--primary)',
                                 fontWeight: 600,
                                 fontSize: '0.9rem',
                                 cursor: 'pointer',
@@ -167,7 +170,8 @@ const LoginModal = ({ isOpen, onClose }) => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                gap: '0.5rem'
+                                gap: '0.5rem',
+                                minHeight: '44px'
                             }}>
                                 {t('auth.continueVendor')}
                             </button>
@@ -176,7 +180,7 @@ const LoginModal = ({ isOpen, onClose }) => {
                         <div
                             style={{
                                 padding: '1.5rem',
-                                border: '1px solid #E2E8F0',
+                                border: '1px solid var(--border-color)',
                                 borderRadius: '12px',
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -184,15 +188,15 @@ const LoginModal = ({ isOpen, onClose }) => {
                                 textAlign: 'center',
                                 cursor: 'pointer',
                                 transition: 'all 0.2s',
-                                backgroundColor: 'white'
+                                backgroundColor: 'var(--card-bg)'
                             }}
                             onMouseOver={(e) => {
-                                e.currentTarget.style.borderColor = '#0A3D62';
+                                e.currentTarget.style.borderColor = 'var(--secondary)';
                                 e.currentTarget.style.transform = 'translateY(-2px)';
-                                e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.05)';
+                                e.currentTarget.style.boxShadow = 'var(--shadow-md)';
                             }}
                             onMouseOut={(e) => {
-                                e.currentTarget.style.borderColor = '#E2E8F0';
+                                e.currentTarget.style.borderColor = 'var(--border-color)';
                                 e.currentTarget.style.transform = 'translateY(0)';
                                 e.currentTarget.style.boxShadow = 'none';
                             }}
@@ -201,32 +205,29 @@ const LoginModal = ({ isOpen, onClose }) => {
                             <div style={{
                                 width: '56px',
                                 height: '56px',
-                                
-                                
-                                
-                                backgroundColor: '#E0F2FE',
+                                backgroundColor: 'color-mix(in srgb, var(--secondary) 15%, transparent)',
                                 borderRadius: '50%',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 marginBottom: '1rem',
-                                color: '#0369A1'
+                                color: 'var(--secondary)'
                             }}>
                                 <Building2 size={28} />
                             </div>
-                            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#1E293B', marginBottom: '0.5rem' }}>
+                            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text-color)', marginBottom: '0.5rem' }}>
                                 {t('auth.imcUserLogin')}
                             </h3>
-                            <p style={{ fontSize: '0.875rem', color: '#64748B', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+                            <p style={{ fontSize: '0.875rem', color: 'var(--gray-600)', marginBottom: '1.5rem', lineHeight: 1.5 }}>
                                 {t('auth.imcUserLoginDesc')}
                             </p>
                             <button style={{
                                 width: '100%',
                                 padding: '0.75rem',
                                 borderRadius: '8px',
-                                border: '1px solid #0369A1',
-                                backgroundColor: 'white',
-                                color: '#0369A1',
+                                border: '1px solid var(--secondary)',
+                                backgroundColor: 'transparent',
+                                color: 'var(--secondary)',
                                 fontWeight: 600,
                                 fontSize: '0.9rem',
                                 cursor: 'pointer',
@@ -234,7 +235,8 @@ const LoginModal = ({ isOpen, onClose }) => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                gap: '0.5rem'
+                                gap: '0.5rem',
+                                minHeight: '44px'
                             }}>
                                 {t('auth.continueImc')}
                             </button>
@@ -243,12 +245,12 @@ const LoginModal = ({ isOpen, onClose }) => {
                     </div>
 
                     <div style={{
-                        padding: '1rem 2rem',
-                        backgroundColor: '#F8FAFC',
-                        borderTop: '1px solid #F1F5F9',
+                        padding: '1rem clamp(1rem, 3vw, 2rem)',
+                        backgroundColor: 'var(--gray-100)',
+                        borderTop: '1px solid var(--border-color)',
                         textAlign: 'center',
                         fontSize: '0.8rem',
-                        color: '#94A3B8'
+                        color: 'var(--gray-600)'
                     }}>
                         {t('auth.policyNote')}
                     </div>

@@ -8,7 +8,7 @@ let inFlightMePromise = null;
 
 const ME_CACHE_TTL_MS = 5000;
 
-const clearCachedMe = () => {
+export const clearCachedMe = () => {
     cachedMe = null;
     cachedMeAt = 0;
     inFlightMePromise = null;

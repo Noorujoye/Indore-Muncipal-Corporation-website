@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Button from '../common/Button';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -18,32 +18,34 @@ const HeroSection = () => {
                 >
 
                     <h1 style={{
-                        fontSize: 'clamp(2.5rem, 4vw, 4rem)',
+                        fontSize: 'clamp(1.85rem, 5vw, 3.5rem)',
                         fontWeight: 800,
-                        marginBottom: '1.5rem',
+                        marginBottom: '1.25rem',
                         color: 'var(--gov-text-primary)',
-                        lineHeight: 1.1,
+                        lineHeight: 1.15,
                     }}>
                         {t('home.heroTitlePrefix')} <span style={{ color: 'var(--gov-primary)' }}>{t('home.heroTitleAccent')}</span>
                     </h1>
 
                     <p style={{
-                        fontSize: '1.25rem',
+                        fontSize: 'clamp(1rem, 1.3vw, 1.25rem)',
                         color: 'var(--gov-text-secondary)',
-                        marginBottom: '2.5rem',
+                        marginBottom: '2rem',
                         maxWidth: '540px',
                         lineHeight: 1.6,
                     }}>
                         {t('home.heroDesc')}
                     </p>
 
-                    <div style={{ display: 'flex', gap: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                         <Button
                             variant="primary"
+                            className="touch-target"
                             onClick={() => navigate('/vendor/register')}
                             style={{
-                                padding: '1rem 2.5rem',
-                                fontSize: '1.1rem',
+                                minHeight: '48px',
+                                padding: '0.85rem 2rem',
+                                fontSize: '1.05rem',
                                 borderRadius: '8px',
                                 backgroundColor: 'var(--gov-primary)',
                             }}

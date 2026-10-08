@@ -1,8 +1,10 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { FileText, CheckCircle, Clock, AlertTriangle, Send, ShieldCheck, CornerUpLeft, Award, TrendingUp } from 'lucide-react';
 import apiClient from '../../services/apiClient';
+import { useTranslation } from 'react-i18next';
 
 const IMCDashboard = () => {
+    const { t } = useTranslation();
     const [role, setRole] = useState('CREATOR');
     const [stats, setStats] = useState({});
     const [pendingVendors, setPendingVendors] = useState([]);
@@ -90,58 +92,56 @@ const IMCDashboard = () => {
     }, []);
 
     const handleApproveVendor = async (vendorId) => {
-        if (!window.confirm("Approve this vendor? System will generate a password.")) return;
+        if (!window.confirm(t('imcDashboard.confirmApprove'))) return;
         try {
             const response = await apiClient.post(`/creator/vendors/${vendorId}/approve`);
-            
-            alert(response.message || "Vendor Approved Successfully!");
-            
+            alert(response.message || t('imcDashboard.approvalSuccess'));
             setPendingVendors(prev => prev.filter(v => v.id !== vendorId));
         } catch (error) {
             console.error("Approval failed", error);
-            alert("Approval failed: " + (error.response?.data?.message || "Unknown error"));
+            alert(`${t('imcDashboard.approvalFailed')}: ` + (error.response?.data?.message || "Unknown error"));
         }
     };
 
     const getDashboardContent = () => {
         if (role === 'APPROVER') {
             return {
-                title: 'Approver Dashboard',
-                subtitle: 'Final authority for invoice approval and payment readiness.',
+                title: t('imcDashboard.approverTitle'),
+                subtitle: t('imcDashboard.approverSubtitle'),
                 cards: [
-                    { label: 'Invoices Pending Approval', value: stats.pendingApprovalCount, icon: Clock, color: '#EAB308' },
-                    { label: 'Approved Today', value: stats.approvedToday, icon: CheckCircle, color: '#10B981' },
-                    { label: 'Rejected Today', value: stats.rejectedToday, icon: AlertTriangle, color: '#EF4444' },
-                    { label: 'Ready for Payment', value: stats.readyForPaymentTotal, icon: Award, color: '#003366' }
+                    { label: t('imcDashboard.cards.pendingApproval'), value: stats.pendingApprovalCount, icon: Clock, color: '#EAB308' },
+                    { label: t('imcDashboard.cards.approvedToday'), value: stats.approvedToday, icon: CheckCircle, color: '#10B981' },
+                    { label: t('imcDashboard.cards.rejectedToday'), value: stats.rejectedToday, icon: AlertTriangle, color: '#EF4444' },
+                    { label: t('imcDashboard.cards.readyForPayment'), value: stats.readyForPaymentTotal, icon: Award, color: '#003366' }
                 ]
             };
         }
 
         if (role === 'VERIFIER') {
             return {
-                title: 'Verifier Dashboard',
-                subtitle: 'Verify invoice calculations and technical correctness before approval.',
+                title: t('imcDashboard.verifierTitle'),
+                subtitle: t('imcDashboard.verifierSubtitle'),
                 cards: [
-                    { label: 'Pending Verification', value: stats.pendingVerificationCount, icon: Clock, color: '#EAB308' },
-                    { label: 'Verified Today', value: stats.verifiedToday, icon: ShieldCheck, color: '#3B82F6' },
-                    { label: 'Returned for Correction', value: stats.returnedForCorrection, icon: CornerUpLeft, color: '#EF4444' },
-                    { label: 'Forwarded to Approver', value: stats.forwardedToApprover, icon: Send, color: '#10B981' }
+                    { label: t('imcDashboard.cards.pendingVerification'), value: stats.pendingVerificationCount, icon: Clock, color: '#EAB308' },
+                    { label: t('imcDashboard.cards.verifiedToday'), value: stats.verifiedToday, icon: ShieldCheck, color: '#3B82F6' },
+                    { label: t('imcDashboard.cards.returnedForCorrection'), value: stats.returnedForCorrection, icon: CornerUpLeft, color: '#EF4444' },
+                    { label: t('imcDashboard.cards.forwardedToApprover'), value: stats.forwardedToApprover, icon: Send, color: '#10B981' }
                 ]
             };
         }
 
         return {
-            title: 'Creator Dashboard',
-            subtitle: 'Perform initial scrutiny of invoices submitted by vendors.',
+            title: t('imcDashboard.creatorTitle'),
+            subtitle: t('imcDashboard.creatorSubtitle'),
             cards: [
-                { label: 'Pending Scrutiny', value: stats.pendingScrutinyCount, icon: Clock, color: '#EAB308' },
-                { label: 'Forwarded Today', value: stats.forwardedToday, icon: Send, color: '#3B82F6' },
-                { label: 'Rejected by Me', value: stats.rejectedByMe, icon: AlertTriangle, color: '#EF4444' }
+                { label: t('imcDashboard.cards.pendingScrutiny'), value: stats.pendingScrutinyCount, icon: Clock, color: '#EAB308' },
+                { label: t('imcDashboard.cards.forwardedToday'), value: stats.forwardedToday, icon: Send, color: '#3B82F6' },
+                { label: t('imcDashboard.cards.rejectedByMe'), value: stats.rejectedByMe, icon: AlertTriangle, color: '#EF4444' }
             ]
         };
     };
 
-    if (loading) return <div style={{ padding: '2rem' }}>Loading Dashboard...</div>;
+    if (loading) return <div style={{ padding: '2rem' }}>{t('imcDashboard.loading')}</div>;
 
     const content = getDashboardContent();
 
@@ -154,23 +154,23 @@ const IMCDashboard = () => {
 
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                gap: '1.5rem',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
+                gap: '1.25rem',
                 marginBottom: '2rem'
             }}>
                 {content.cards.map((stat, index) => (
                     <div key={index} className="gov-card" style={{
                         borderLeft: `4px solid ${stat.color}`,
-                        padding: '1.5rem',
+                        padding: '1.25rem',
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center'
                     }}>
                         <div>
-                            <p style={{ color: '#64748B', fontSize: '0.85rem', fontWeight: 600, textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+                            <p style={{ color: 'var(--text-muted, #64748B)', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', marginBottom: '0.25rem' }}>
                                 {stat.label}
                             </p>
-                            <p style={{ fontSize: '2rem', fontWeight: 700, color: '#0F172A', lineHeight: 1 }}>
+                            <p style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-color, #0F172A)', lineHeight: 1, margin: 0 }}>
                                 {stat.value ?? 0}
                             </p>
                         </div>
@@ -186,24 +186,24 @@ const IMCDashboard = () => {
 
             {role === 'CREATOR' && (
                 <div style={{ marginBottom: '2rem' }}>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#334155', marginBottom: '1rem' }}>
-                        Pending Vendor Registrations
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-color)', marginBottom: '1rem' }}>
+                        {t('imcDashboard.pendingRegistrations')}
                     </h3>
                     {pendingVendors.length === 0 ? (
-                        <div style={{ padding: '2rem', textAlign: 'center', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #E2E8F0', color: '#64748B' }}>
-                            No pending registrations.
+                        <div style={{ padding: '2rem', textAlign: 'center', backgroundColor: 'var(--card-bg)', borderRadius: '8px', border: '1px solid var(--border-color)', color: 'var(--text-muted, #64748B)' }}>
+                            {t('imcDashboard.noPendingRegistrations')}
                         </div>
                     ) : (
-                        <div style={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid #E2E8F0', overflow: 'hidden' }}>
+                        <div style={{ backgroundColor: 'var(--card-bg)', borderRadius: '8px', border: '1px solid var(--border-color)', overflow: 'hidden' }}>
                             {pendingVendors.map((vendor, idx) => (
                                 <div key={vendor.id} style={{
-                                    padding: '1.5rem',
-                                    borderBottom: idx !== pendingVendors.length - 1 ? '1px solid #F1F5F9' : 'none',
-                                    display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                                    padding: '1.25rem',
+                                    borderBottom: idx !== pendingVendors.length - 1 ? '1px solid var(--border-color)' : 'none',
+                                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem'
                                 }}>
                                     <div>
-                                        <h4 style={{ margin: '0 0 0.25rem 0', color: '#0F172A', fontSize: '1rem' }}>{vendor.firmName}</h4>
-                                        <div style={{ display: 'flex', gap: '1rem', fontSize: '0.85rem', color: '#64748B' }}>
+                                        <h4 style={{ margin: '0 0 0.25rem 0', color: 'var(--text-color)', fontSize: '1rem' }}>{vendor.firmName}</h4>
+                                        <div style={{ display: 'flex', gap: '1rem', fontSize: '0.85rem', color: 'var(--text-muted, #64748B)', flexWrap: 'wrap' }}>
                                             <span>{vendor.firmType}</span>
                                             <span>•</span>
                                             <span>{vendor.user?.email || 'No Email'}</span>
@@ -212,8 +212,10 @@ const IMCDashboard = () => {
                                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                                         <button
                                             onClick={() => handleApproveVendor(vendor.id)}
+                                            className="touch-target"
                                             style={{
-                                                padding: '0.5rem 1rem',
+                                                padding: '0.6rem 1.25rem',
+                                                minHeight: '44px',
                                                 backgroundColor: '#16A34A',
                                                 color: 'white',
                                                 border: 'none',
@@ -221,10 +223,10 @@ const IMCDashboard = () => {
                                                 fontWeight: 600,
                                                 fontSize: '0.85rem',
                                                 cursor: 'pointer',
-                                                display: 'flex', alignItems: 'center', gap: '0.3rem'
+                                                display: 'flex', alignItems: 'center', gap: '0.4rem'
                                             }}
                                         >
-                                            <CheckCircle size={14} /> Approve
+                                            <CheckCircle size={16} /> {t('imcDashboard.approve')}
                                         </button>
                                     </div>
                                 </div>
@@ -234,45 +236,33 @@ const IMCDashboard = () => {
                 </div>
             )}
 
-            {role !== 'VENDOR' && role !== 'CREATOR' && (
-                <div style={{ marginBottom: '2rem' }}>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#334155', marginBottom: '1rem' }}>Recent System Activity</h3>
-                    <div style={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid #E2E8F0', padding: '0' }}>
-                        {[
-                            
-                        ].map((item, idx) => (
-                            
-                            <div key={idx}>Activity Item</div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
             <div style={{
-                backgroundColor: '#F8FAFC',
+                backgroundColor: 'var(--card-bg)',
                 padding: '1.5rem',
                 borderRadius: '6px',
-                border: '1px solid #E2E8F0',
-                color: '#475569'
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-color)'
             }}>
-                <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.75rem', color: '#334155' }}>OPERATIONAL GUIDELINES</h3>
+                <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--text-color)' }}>
+                    {t('imcDashboard.guidelinesTitle')}
+                </h3>
                 {role === 'APPROVER' ? (
                     <ul style={{ paddingLeft: '1.5rem', margin: 0, fontSize: '0.9rem', lineHeight: '1.6' }}>
-                        <li>Your decision is final. <strong>Approve</strong> only when fully satisfied with the audit trail.</li>
-                        <li>Check "Verified On" date and remarks from previous stages carefully.</li>
-                        <li>Payments are processed automatically after "Ready for Payment" status.</li>
+                        <li>{t('imcDashboard.approverGuidelines.0')}</li>
+                        <li>{t('imcDashboard.approverGuidelines.1')}</li>
+                        <li>{t('imcDashboard.approverGuidelines.2')}</li>
                     </ul>
                 ) : role === 'VERIFIER' ? (
                     <ul style={{ paddingLeft: '1.5rem', margin: 0, fontSize: '0.9rem', lineHeight: '1.6' }}>
-                        <li>Check Base Amount and GST % against attached invoice PDF.</li>
-                        <li>Return to Creator if any document is blurry or incorrect.</li>
-                        <li>Do not forward partial verifications.</li>
+                        <li>{t('imcDashboard.verifierGuidelines.0')}</li>
+                        <li>{t('imcDashboard.verifierGuidelines.1')}</li>
+                        <li>{t('imcDashboard.verifierGuidelines.2')}</li>
                     </ul>
                 ) : (
                     <ul style={{ paddingLeft: '1.5rem', margin: 0, fontSize: '0.9rem', lineHeight: '1.6' }}>
-                        <li>Ensure Vendor Name matches the Invoice exactly.</li>
-                        <li>Verify Invoice Date is within the allowed financial year.</li>
-                        <li>Reject immediately if mandatory attachments are missing.</li>
+                        <li>{t('imcDashboard.creatorGuidelines.0')}</li>
+                        <li>{t('imcDashboard.creatorGuidelines.1')}</li>
+                        <li>{t('imcDashboard.creatorGuidelines.2')}</li>
                     </ul>
                 )}
             </div>

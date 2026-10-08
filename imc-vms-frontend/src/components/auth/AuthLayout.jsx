@@ -1,6 +1,8 @@
-﻿import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import ThemeToggle from '../common/ThemeToggle';
+import LanguageToggle from '../common/LanguageToggle';
 
 const AuthLayout = ({ children, title, subtitle, role, illustration }) => {
     const navigate = useNavigate();
@@ -9,7 +11,7 @@ const AuthLayout = ({ children, title, subtitle, role, illustration }) => {
     return (
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-color)' }}>
             <div style={{
-                padding: '0.75rem 2rem',
+                padding: '0.75rem clamp(0.75rem, 3vw, 2rem)',
                 borderBottom: '1px solid var(--border-color)',
                 backgroundColor: 'var(--card-bg)',
                 display: 'flex'
@@ -23,37 +25,42 @@ const AuthLayout = ({ children, title, subtitle, role, illustration }) => {
                     flexWrap: 'wrap'
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <img src="/imc-logo-enhanced.png" alt="IMC Logo" style={{ height: '40px' }} />
+                        <img src="/imc-logo-enhanced.png" alt="IMC Logo" style={{ height: '36px' }} />
                         <div style={{ lineHeight: 1.1 }}>
-                            <div style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1rem' }}>INDORE MUNICIPAL CORPORATION</div>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--gray-600)', fontWeight: 600 }}>INVOICE MANAGEMENT SYSTEM</div>
+                            <div style={{ fontWeight: 800, color: 'var(--primary)', fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}>{t('brand.org')}</div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--gray-600)', fontWeight: 600 }}>{t('brand.systemUpper')}</div>
                         </div>
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={() => navigate('/')}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '6px',
-                            border: '1px solid var(--border-color)',
-                            backgroundColor: 'transparent',
-                            color: 'var(--gray-600)',
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            fontWeight: 500,
-                            transition: 'all 0.2s',
-                            whiteSpace: 'nowrap'
-                        }}
-                        onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--gray-400)'; e.currentTarget.style.color = 'var(--text-color)'; }}
-                        onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = 'var(--gray-600)'; }}
-                    >
-                        <ArrowLeft size={16} />
-                        {t('common.backToHome')}
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        <LanguageToggle />
+                        <ThemeToggle />
+                        <button
+                            type="button"
+                            onClick={() => navigate('/')}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                padding: '0.45rem 0.85rem',
+                                borderRadius: '6px',
+                                border: '1px solid var(--border-color)',
+                                backgroundColor: 'transparent',
+                                color: 'var(--gray-600)',
+                                cursor: 'pointer',
+                                fontSize: '0.85rem',
+                                fontWeight: 500,
+                                transition: 'all 0.2s',
+                                whiteSpace: 'nowrap',
+                                minHeight: '38px'
+                            }}
+                            onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--gray-400)'; e.currentTarget.style.color = 'var(--text-color)'; }}
+                            onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = 'var(--gray-600)'; }}
+                        >
+                            <ArrowLeft size={16} />
+                            {t('common.backToHome')}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -62,7 +69,7 @@ const AuthLayout = ({ children, title, subtitle, role, illustration }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '2rem',
+                padding: 'clamp(0.75rem, 3vw, 2rem)',
                 position: 'relative',
                 overflow: 'hidden'
             }}>
@@ -83,14 +90,13 @@ const AuthLayout = ({ children, title, subtitle, role, illustration }) => {
                     width: '100%',
                     maxWidth: '1000px',
                     backgroundColor: 'var(--card-bg)',
-                    borderRadius: '24px',
+                    borderRadius: 'clamp(12px, 3vw, 24px)',
                     boxShadow: 'var(--shadow-lg)',
                     border: '1px solid var(--border-color)',
-                    overflow: 'hidden',
-                    minHeight: '600px'
+                    overflow: 'hidden'
                 }}>
-                    <div style={{ flex: 1, padding: '3rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <div style={{ marginBottom: '2.5rem' }}>
+                    <div style={{ flex: 1, padding: 'clamp(1.25rem, 4vw, 3rem)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <div style={{ marginBottom: 'clamp(1.25rem, 3vw, 2.5rem)' }}>
                             <div style={{
                                 display: 'inline-block',
                                 padding: '0.35rem 0.75rem',
@@ -102,14 +108,14 @@ const AuthLayout = ({ children, title, subtitle, role, illustration }) => {
                                 fontWeight: 700,
                                 textTransform: 'uppercase',
                                 letterSpacing: '0.05em',
-                                marginBottom: '1rem'
+                                marginBottom: '0.75rem'
                             }}>
-                                {role === 'vendor' ? 'Vendor Portal' : 'Official Portal'}
+                                {role === 'vendor' ? t('authLayout.vendorPortal') : t('authLayout.officialPortal')}
                             </div>
-                            <h1 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-color)', marginBottom: '0.5rem' }}>
+                            <h1 style={{ fontSize: 'clamp(1.35rem, 3vw, 2rem)', fontWeight: 800, color: 'var(--text-color)', marginBottom: '0.5rem' }}>
                                 {title}
                             </h1>
-                            <p style={{ color: 'var(--gray-600)', fontSize: '1rem' }}>
+                            <p style={{ color: 'var(--gray-600)', fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>
                                 {subtitle}
                             </p>
                         </div>
@@ -120,7 +126,6 @@ const AuthLayout = ({ children, title, subtitle, role, illustration }) => {
                     <div style={{
                         flex: 1,
                         backgroundColor: '#0A3D62',
-                        display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
                         alignItems: 'center',
@@ -129,7 +134,7 @@ const AuthLayout = ({ children, title, subtitle, role, illustration }) => {
                         textAlign: 'center',
                         backgroundImage: 'linear-gradient(135deg, #0A3D62 0%, #061F33 100%)',
                         position: 'relative'
-                    }} className="hidden md:flex">
+                    }} className="desktop-only">
                         <div style={{
                             position: 'absolute',
                             top: 0, left: 0, right: 0, bottom: 0,
@@ -141,12 +146,12 @@ const AuthLayout = ({ children, title, subtitle, role, illustration }) => {
                         <div style={{ position: 'relative', zIndex: 10, maxWidth: '320px' }}>
                             {illustration}
                             <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '2rem', marginBottom: '1rem' }}>
-                                {role === 'vendor' ? 'Grow with Indore' : 'Serving the City'}
+                                {role === 'vendor' ? t('authLayout.growWithIndore') : t('authLayout.servingTheCity')}
                             </h3>
                             <p style={{ opacity: 0.8, lineHeight: 1.6 }}>
                                 {role === 'vendor'
-                                    ? 'Join thousands of vendors contributing to the development of India\'s cleanest city.'
-                                    : 'Secure access for authorized municipal corporation officials.'}
+                                    ? t('authLayout.vendorDesc')
+                                    : t('authLayout.officialDesc')}
                             </p>
                         </div>
                     </div>

@@ -27,6 +27,7 @@ const VendorLogin = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (loading) return;
         setLoading(true);
         setBanner(null);
 
@@ -80,7 +81,7 @@ const VendorLogin = () => {
 
         const email = (formData.email || '').trim();
         if (!email) {
-            setBanner({ variant: 'error', message: 'Enter your email first, then click Forgot Password.' });
+            setBanner({ variant: 'error', message: t('auth.vendorEmailFirst') });
             return;
         }
 
@@ -90,13 +91,13 @@ const VendorLogin = () => {
             const res = await apiClient.post('/vendors/forgot-password', { email });
             setBanner({
                 variant: 'success',
-                message: res?.message || 'If this email is registered and active, you will receive a reset link shortly.'
+                message: res?.message || t('auth.resetLinkSent')
             });
         } catch (err) {
             const message =
                 err?.response?.data?.message ||
                 err?.message ||
-                'Failed to submit request';
+                t('auth.loginFailed');
             setBanner({ variant: 'error', message });
         } finally {
             setForgotLoading(false);

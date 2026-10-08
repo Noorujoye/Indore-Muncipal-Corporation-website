@@ -62,16 +62,26 @@ body {
 }
 
 .gov-card-header {
-    padding: 1.25rem 1.5rem;
+    padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--gov-border);
-    background-color: #F8FAFC;
+    background-color: var(--gray-100);
     font-weight: 600;
     color: var(--gov-text-primary);
     border-radius: 6px 6px 0 0;
 }
 
 .gov-card-body {
-    padding: 1.5rem;
+    padding: 1.25rem;
+}
+
+@media (max-width: 640px) {
+    .gov-card-header {
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
+    }
+    .gov-card-body {
+        padding: 1rem;
+    }
 }
 
 /* Official Buttons - Solid, flat, authoritative */
@@ -79,13 +89,15 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1rem;
+    min-height: 40px;
     font-weight: 600;
-    border-radius: 4px;
+    border-radius: 6px;
     border: 1px solid transparent;
     transition: all 0.2s;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    line-height: 1.2;
 }
 
 .btn-gov.btn-primary {
@@ -94,7 +106,7 @@ body {
 }
 
 .btn-gov.btn-primary:hover {
-    background-color: #002244;
+    filter: brightness(0.92);
 }
 
 .btn-gov.btn-success {
@@ -103,7 +115,7 @@ body {
 }
 
 .btn-gov.btn-success:hover {
-    background-color: #14532D;
+    filter: brightness(0.92);
 }
 
 .btn-gov.btn-danger {
@@ -112,55 +124,59 @@ body {
 }
 
 .btn-gov.btn-danger:hover {
-    background-color: #B91C1C;
+    filter: brightness(0.92);
 }
 
 .btn-gov.btn-outline {
-    background-color: white;
+    background-color: var(--card-bg);
     border-color: var(--gov-border);
     color: var(--gov-text-secondary);
 }
 
 .btn-gov.btn-outline:hover {
-    background-color: #F8FAFC;
+    background-color: var(--gray-100);
     color: var(--gov-text-primary);
 }
 
-/* Official Tables - Strict grid, headers */
+/* Official Tables - Strict grid, headers with responsive touch scrolling */
 .gov-table-container {
     border: 1px solid var(--gov-border);
     border-radius: 6px;
-    overflow: hidden;
-    background-color: white;
+    background-color: var(--card-bg);
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .gov-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
+    min-width: 600px;
 }
 
 .gov-table th {
-    background-color: #F1F5F9;
+    background-color: var(--gray-100);
     color: var(--gov-text-secondary);
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.75rem;
-    padding: 1rem;
+    padding: 0.875rem 1rem;
     text-align: left;
     border-bottom: 2px solid var(--gov-border);
     letter-spacing: 0.05em;
+    white-space: nowrap;
 }
 
 .gov-table td {
-    padding: 1rem;
+    padding: 0.875rem 1rem;
     border-bottom: 1px solid var(--gov-border);
     color: var(--gov-text-primary);
     vertical-align: middle;
 }
 
 .gov-table tr:hover td {
-    background-color: #F8FAFC;
+    background-color: var(--gray-100);
 }
 
 /* Status Badges - Pill, clear contrast */
@@ -198,6 +214,30 @@ body {
     border: 1px solid #D1D5DB;
 }
 
+[data-theme="dark"] .gov-badge-warning {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #FCD34D;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+[data-theme="dark"] .gov-badge-success {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #6EE7B7;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+[data-theme="dark"] .gov-badge-danger {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #FCA5A5;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+[data-theme="dark"] .gov-badge-neutral {
+    background-color: rgba(148, 163, 184, 0.15);
+    color: #CBD5E1;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
 /* Headers */
 .gov-header {
     margin-bottom: 1.5rem;
@@ -221,14 +261,16 @@ body {
     width: 100%;
     padding: 0.625rem 0.75rem;
     border: 1px solid var(--gov-border);
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 0.95rem;
-    background-color: white;
-    transition: border-color 0.15s;
+    background-color: var(--card-bg);
+    color: var(--gov-text-primary);
+    min-height: 42px;
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .gov-input:focus {
     outline: none;
     border-color: var(--gov-primary);
-    box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--gov-primary) 20%, transparent);
 }

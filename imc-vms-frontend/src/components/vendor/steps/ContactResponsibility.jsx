@@ -1,4 +1,4 @@
-﻿import { User, Briefcase, Phone, MapPin, Calendar, FileText, AlertCircle } from 'lucide-react';
+import { User, Briefcase, Phone, MapPin, Calendar, FileText, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const InputField = ({ label, type = "text", placeholder, value, onChange, icon: Icon, required = false, error }) => (
@@ -90,7 +90,7 @@ const ContactResponsibility = ({ data, updateData, errors = {} }) => {
                     {t('vendorReg.contact.authorizedTitle')}
                 </h3>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 'clamp(1rem, 3vw, 2rem)' }}>
                     <InputField
                         label={t('vendorReg.contact.fullName')}
                         placeholder={t('vendorReg.contact.fullNamePh')}
@@ -160,7 +160,7 @@ const ContactResponsibility = ({ data, updateData, errors = {} }) => {
                     {t('vendorReg.contact.addressTitle')}
                 </h3>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 'clamp(1rem, 3vw, 2rem)' }}>
                     <div style={{ gridColumn: '1 / -1' }}>
                         <InputField
                             label={t('vendorReg.contact.addressLine')}
@@ -173,7 +173,7 @@ const ContactResponsibility = ({ data, updateData, errors = {} }) => {
                         />
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '2rem', width: '100%', gridColumn: '1 / -1' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: 'clamp(1rem, 3vw, 2rem)', width: '100%', gridColumn: '1 / -1' }}>
                         <InputField
                             label={t('vendorReg.contact.city')}
                             value={data.city}
@@ -190,7 +190,7 @@ const ContactResponsibility = ({ data, updateData, errors = {} }) => {
                         />
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '2rem', width: '100%', gridColumn: '1 / -1' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: 'clamp(1rem, 3vw, 2rem)', width: '100%', gridColumn: '1 / -1' }}>
                         <InputField
                             label={t('vendorReg.contact.state')}
                             value={data.state}

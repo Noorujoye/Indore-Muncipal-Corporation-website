@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Clock, AlertCircle, CheckCircle, Bell, ChevronRight, AlertTriangle, ArrowRight } from 'lucide-react';
 import apiClient from '../../services/apiClient';
@@ -47,20 +47,39 @@ const VendorDashboard = () => {
     return (
         <div>
             <div style={{ marginBottom: '2rem' }}>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.5rem' }}>
+                <h1 style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', fontWeight: 700, color: 'var(--text-color)', marginBottom: '0.5rem' }}>
                     {t('vendorDashboard.title')}
                 </h1>
-                <p style={{ color: '#64748B' }}>
+                <p style={{ color: 'var(--gray-600)' }}>
                     {vendorName
                         ? t('vendorDashboard.welcomeBackName', { name: vendorName })
                         : t('vendorDashboard.welcomeBack')}
                 </p>
+
+                {/* Mobile & Desktop Quick Actions */}
+                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem', flexWrap: 'wrap' }}>
+                    <button
+                        onClick={() => navigate('/vendor/invoices/create')}
+                        className="btn-gov btn-primary"
+                        style={{ minHeight: '44px', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.25rem' }}
+                    >
+                        <FileText size={18} /> + Submit New Invoice
+                    </button>
+                    <button
+                        onClick={() => navigate('/vendor/invoices')}
+                        className="btn-gov btn-outline"
+                        style={{ minHeight: '44px', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.25rem' }}
+                    >
+                        My Invoices
+                    </button>
+                </div>
             </div>
 
-
-
             <div style={{
-                display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem'
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 140px), 1fr))',
+                gap: 'clamp(0.75rem, 2vw, 1.25rem)',
+                marginBottom: '2.5rem'
             }}>
                 {[
                     { label: t('vendorDashboard.kpi.totalInvoices'), value: data.totalSubmitted, color: '#3B82F6' },
@@ -70,20 +89,20 @@ const VendorDashboard = () => {
                 ].map((stat, idx) => (
                     <div key={idx}
                         style={{
-                            backgroundColor: 'white',
-                            padding: '1.5rem',
+                            backgroundColor: 'var(--card-bg)',
+                            padding: 'clamp(1rem, 3vw, 1.5rem)',
                             borderRadius: '8px',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                            boxShadow: 'var(--shadow-sm)',
                             borderLeft: `5px solid ${stat.color}`,
-                            border: '1px solid #E2E8F0',
+                            border: '1px solid var(--border-color)',
                             transition: 'transform 0.2s, box-shadow 0.2s',
                             cursor: 'default'
                         }}
-                        onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)'; }}
-                        onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)'; }}
+                        onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
                     >
-                        <p style={{ color: '#64748B', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>{stat.label}</p>
-                        <p style={{ fontSize: '2.25rem', fontWeight: 600, color: '#1E293B', lineHeight: 1 }}>{stat.value}</p>
+                        <p style={{ color: 'var(--gray-600)', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>{stat.label}</p>
+                        <p style={{ fontSize: 'clamp(1.5rem, 4vw, 2.25rem)', fontWeight: 700, color: 'var(--text-color)', lineHeight: 1 }}>{stat.value}</p>
                     </div>
                 ))}
             </div>
