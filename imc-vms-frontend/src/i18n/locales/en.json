@@ -60,7 +60,8 @@
     },
     "notifications": {
       "title": "Notifications",
-      "viewAll": "View All Notifications"
+      "viewAll": "View All Notifications",
+      "noNew": "No new notifications."
     },
     "profile": {
       "myProfile": "My Profile"
@@ -159,6 +160,7 @@
     "searchPlaceholder": "Search ticket ID or subject...",
     "filterStatus": "Filter Status",
     "table": {
+      "ticketId": "Ticket ID",
       "subject": "Subject",
       "relatedInvoice": "Related Invoice",
       "date": "Date",
@@ -340,7 +342,10 @@
     "vendorOnlyError": "This account is not a Vendor. Please use IMC User Login.",
     "imcOnlyError": "This account is not an IMC user. Please use Vendor Login.",
     "unauthorizedRole": "Unauthorized role. Please contact administrator.",
-    "loginFailed": "Login failed. Please check your credentials."
+    "loginFailed": "Login failed. Please check your credentials.",
+    "vendorEmailFirst": "Enter your email first, then click Forgot Password.",
+    "resetLinkSent": "If this email is registered and active, you will receive a reset link shortly.",
+    "officialResetNotice": "Official password resets must be requested via IMC IT Helpdesk / System Administrator."
   },
   "public": {
     "aboutTitle": "About IMC Invoice Management System",
@@ -483,5 +488,276 @@
     "VERIFIER_PENDING": "Verifier Pending",
     "APPROVER_PENDING": "Approver Pending",
     "UNKNOWN": "Unknown"
+  },
+  "imcLayout": {
+    "officialPortal": "OFFICIAL PORTAL",
+    "authority": "Authority",
+    "mainNavigation": "MAIN NAVIGATION",
+    "logout": "Logout",
+    "roles": {
+      "CREATOR": "Invoice Creator",
+      "VERIFIER": "Invoice Verifier",
+      "APPROVER": "Final Approver",
+      "OFFICIAL": "IMC Official"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "queue": "Invoices Queue",
+      "queueVerification": "Invoices for Verification",
+      "queueApproval": "Invoices for Approval",
+      "returned": "Returned from Approver",
+      "approved": "Approved (Ready for Payment)",
+      "rejected": "Rejected Invoices",
+      "vendors": "New Requests",
+      "directory": "Vendor Directory",
+      "history": "Action History",
+      "verificationHistory": "Verification History",
+      "approvalHistory": "Approval History",
+      "reports": "Reports",
+      "guidelines": "Guidelines"
+    }
+  },
+  "imcDashboard": {
+    "loading": "Loading Dashboard...",
+    "approverTitle": "Approver Dashboard",
+    "approverSubtitle": "Final authority for invoice approval and payment readiness.",
+    "verifierTitle": "Verifier Dashboard",
+    "verifierSubtitle": "Verify invoice calculations and technical correctness before approval.",
+    "creatorTitle": "Creator Dashboard",
+    "creatorSubtitle": "Perform initial scrutiny of invoices submitted by vendors.",
+    "cards": {
+      "pendingApproval": "Invoices Pending Approval",
+      "approvedToday": "Approved Today",
+      "rejectedToday": "Rejected Today",
+      "readyForPayment": "Ready for Payment",
+      "pendingVerification": "Pending Verification",
+      "verifiedToday": "Verified Today",
+      "returnedForCorrection": "Returned for Correction",
+      "forwardedToApprover": "Forwarded to Approver",
+      "pendingScrutiny": "Pending Scrutiny",
+      "forwardedToday": "Forwarded Today",
+      "rejectedByMe": "Rejected by Me"
+    },
+    "pendingRegistrations": "Pending Vendor Registrations",
+    "noPendingRegistrations": "No pending registrations.",
+    "approve": "Approve",
+    "confirmApprove": "Approve this vendor? System will generate a password.",
+    "approvalSuccess": "Vendor Approved Successfully!",
+    "approvalFailed": "Approval failed",
+    "guidelinesTitle": "OPERATIONAL GUIDELINES",
+    "approverGuidelines": [
+      "Your decision is final. Approve only when fully satisfied with the audit trail.",
+      "Check 'Verified On' date and remarks from previous stages carefully.",
+      "Payments are processed automatically after 'Ready for Payment' status."
+    ],
+    "verifierGuidelines": [
+      "Check Base Amount and GST % against attached invoice PDF.",
+      "Return to Creator if any document is blurry or incorrect.",
+      "Do not forward partial verifications."
+    ],
+    "creatorGuidelines": [
+      "Ensure Vendor Name matches the Invoice exactly.",
+      "Verify Invoice Date is within the allowed financial year.",
+      "Reject immediately if mandatory attachments are missing."
+    ]
+  },
+  "invoicesQueue": {
+    "loading": "Loading Queue...",
+    "titles": {
+      "returned": "Returned Invoices",
+      "approved": "Approved Invoices",
+      "rejected": "Rejected Invoices",
+      "approverPending": "Invoices Pending Approval",
+      "verifierPending": "Invoices for Verification",
+      "creatorPending": "Invoices Queue"
+    },
+    "subtitles": {
+      "returned": "Invoices returned for correction or clarification.",
+      "approved": "Invoices that have been fully approved and processed.",
+      "rejected": "Invoices that were rejected due to discrepancies.",
+      "approverPending": "Review and grant final financial approval for payment.",
+      "verifierPending": "Verify calculations and supporting documents.",
+      "creatorPending": "Process new invoice submissions from vendors."
+    },
+    "statusFilter": "STATUS:",
+    "table": {
+      "vendorName": "VENDOR NAME",
+      "invoiceNumber": "INVOICE #",
+      "tenderRef": "TENDER REF",
+      "amount": "AMOUNT (₹)",
+      "currentStage": "CURRENT STAGE",
+      "submittedDate": "SUBMITTED DATE",
+      "action": "ACTION"
+    },
+    "actions": {
+      "verify": "Verify",
+      "decide": "Decide",
+      "process": "Process",
+      "verifyInvoice": "Verify Invoice",
+      "decideInvoice": "Decide Invoice",
+      "processInvoice": "Process Invoice"
+    },
+    "empty": "No invoices found in your queue."
+  },
+  "invoiceDecision": {
+    "loading": "Loading Invoice Details...",
+    "backToQueue": "Back to Queue",
+    "invoiceSummary": "INVOICE SUMMARY",
+    "vendorName": "VENDOR NAME",
+    "tenderReference": "TENDER REFERENCE",
+    "baseAmount": "BASE AMOUNT",
+    "submittedDate": "SUBMITTED DATE",
+    "totalAmountIncGst": "TOTAL AMOUNT (Inc. GST)",
+    "attachments": "ATTACHMENTS",
+    "downloadInvoice": "Download Invoice Document",
+    "noDocuments": "No Documents Uploaded",
+    "auditLog": "AUDIT LOG",
+    "stage": "STAGE",
+    "action": "ACTION",
+    "actor": "ACTOR",
+    "remarks": "REMARKS",
+    "decisionAction": "DECISION ACTION",
+    "enterRemarks": "Enter remarks / reason for this action...",
+    "approveForPayment": "APPROVE FOR PAYMENT",
+    "reverifyAndForward": "RE-VERIFY & FORWARD",
+    "verifyAndForward": "VERIFY & FORWARD",
+    "forwardToVerifier": "FORWARD TO VERIFIER",
+    "reject": "REJECT",
+    "markAsPaid": "MARK AS PAID & DISBURSE",
+    "confirmApproval": "Confirm approval? This cannot be undone.",
+    "confirmRejection": "Confirm rejection? This cannot be undone.",
+    "confirmDisbursement": "Confirm payment disbursement? This marks the invoice as PAID and completes the transaction.",
+    "remarksRequired": "Remarks are required for rejection.",
+    "downloadFailed": "Failed to download document"
+  },
+  "invoiceHistory": {
+    "loading": "Loading History...",
+    "titleApproval": "Approval History",
+    "titleVerification": "Verification History",
+    "titleAction": "Action History",
+    "subtitle": "Record of all invoices processed by your account.",
+    "table": {
+      "date": "DATE",
+      "invoiceNumber": "INVOICE #",
+      "vendor": "VENDOR",
+      "actionTaken": "ACTION TAKEN",
+      "currentStatus": "CURRENT STATUS"
+    },
+    "empty": "No invoice processing history recorded for your account yet."
+  },
+  "reports": {
+    "title": "Reports & Analytics",
+    "subtitle": "Live invoice financial records, processing analytics, and official exports.",
+    "last30Days": "Last 30 Days",
+    "last90Days": "Last 90 Days",
+    "allTime": "All Time",
+    "allStatuses": "All Statuses",
+    "exportCsv": "Export CSV",
+    "exporting": "Exporting...",
+    "exportFailed": "Failed to export CSV. Please try again.",
+    "totalInvoices": "Total Invoices",
+    "allRecords": "All records in system",
+    "inLastDays": "In last {{days}} days",
+    "totalValue": "Total Value (₹)",
+    "cumulativeAmount": "Cumulative gross amount",
+    "settledAndPaid": "Settled & Paid",
+    "paidCount": "{{count}} paid invoices",
+    "inProgress": "In Progress",
+    "awaitingReview": "Awaiting review / payment",
+    "rejectionRate": "Rejection Rate",
+    "rejectedCount": "{{count}} rejected invoices",
+    "invoiceRecords": "Invoice Records ({{count}})",
+    "refresh": "Refresh",
+    "loading": "Loading report data...",
+    "table": {
+      "invoiceNumber": "INVOICE #",
+      "vendorName": "VENDOR NAME",
+      "tenderRef": "TENDER REF",
+      "totalAmount": "TOTAL AMOUNT (₹)",
+      "status": "STATUS",
+      "submittedDate": "SUBMITTED DATE"
+    },
+    "empty": "No invoice records found for the selected period and status."
+  },
+  "vendorApproval": {
+    "title": "Vendor Approvals",
+    "subtitle": "Review and approve new vendor registrations.",
+    "loading": "Loading Requests...",
+    "businessIdentity": "Business Identity",
+    "contactDetails": "Contact Details",
+    "bankInformation": "Bank Information",
+    "documents": "Documents",
+    "decisionNotes": "Decision Notes",
+    "rejectionReasonRequired": "Rejection reason (required to reject)",
+    "rejectionPlaceholder": "Enter clear reason (e.g., PAN mismatch, missing documents)",
+    "approve": "Approve",
+    "reject": "Reject",
+    "close": "Close",
+    "registrationId": "Registration ID",
+    "submitted": "Submitted",
+    "type": "Type",
+    "pan": "PAN",
+    "gstin": "GSTIN",
+    "bank": "Bank",
+    "account": "Account",
+    "ifsc": "IFSC",
+    "panCardCopy": "PAN Card Copy",
+    "gstRegistration": "GST Registration",
+    "cancelledCheque": "Cancelled Cheque",
+    "empty": "No pending vendor registrations found."
+  },
+  "vendorDirectory": {
+    "title": "Vendor Directory",
+    "subtitle": "Master list of approved and registered vendors in Indore Municipal Corporation.",
+    "searchPlaceholder": "Search by firm name, email, or PAN...",
+    "loading": "Loading Directory...",
+    "table": {
+      "firm": "FIRM & CONTACT",
+      "type": "BUSINESS TYPE",
+      "joined": "JOINED DATE",
+      "status": "STATUS",
+      "actions": "ACTIONS"
+    },
+    "actions": {
+      "view": "View Details",
+      "block": "Block",
+      "activate": "Activate"
+    },
+    "empty": "No vendors match your search criteria."
+  },
+  "guidelinesPage": {
+    "title": "Operational Guidelines",
+    "subtitle": "Standard Operating Procedures (SOP) for {{role}}",
+    "complianceTitle": "General Compliance Policy",
+    "complianceDesc": "All invoice processing must adhere to the Madhya Pradesh Municipal Corporation Act, 1956 and the internal financial bye-laws of Indore Municipal Corporation. As a designated {{role}}, you are responsible for the accuracy of your validation stage.",
+    "checklistTitle": "Checklist for {{role}}",
+    "mandatoryDocTitle": "Mandatory Document Verification",
+    "mandatoryDocDesc": "Ensure GST Certificate, Pan Card, and Signed Invoice copy are legible.",
+    "discrepancyTitle": "Discrepancy Reporting",
+    "discrepancyDesc": "If any discrepancy is found in tax amounts, DO NOT reject immediately. Use the 'Return to Vendor' or 'Return to Creator' function with specific comments."
+  },
+  "setPassword": {
+    "title": "Set Password",
+    "subtitle": "Create a new password for your account",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Enter new password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter new password",
+    "submit": "Set New Password",
+    "updating": "Updating...",
+    "minChars": "Password must be at least 8 characters.",
+    "mismatch": "Passwords do not match.",
+    "success": "Password updated. You can now log in.",
+    "failed": "Failed to update password",
+    "invalidToken": "Invalid or missing password token."
+  },
+  "authLayout": {
+    "vendorPortal": "Vendor Portal",
+    "officialPortal": "Official Portal",
+    "growWithIndore": "Grow with Indore",
+    "servingTheCity": "Serving the City",
+    "vendorDesc": "Join thousands of vendors contributing to the development of India's cleanest city.",
+    "officialDesc": "Secure access for authorized municipal corporation officials."
   }
 }
+

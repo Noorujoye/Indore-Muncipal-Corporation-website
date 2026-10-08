@@ -1,4 +1,4 @@
-﻿import { Building2, Mail, CreditCard, FileText, AlertCircle } from 'lucide-react';
+import { Building2, Mail, CreditCard, FileText, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const InputField = ({ label, type = "text", placeholder, value, onChange, icon: Icon, required = false, error }) => (
@@ -144,7 +144,7 @@ const BusinessIdentity = ({ data, updateData, errors = {} }) => {
                 {t('vendorReg.step1')}
             </h2>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(1rem, 3vw, 2rem)' }}>
                 <div>
                     <InputField
                         label={t('vendorReg.business.firmName')}

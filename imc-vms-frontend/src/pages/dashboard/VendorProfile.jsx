@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { User, Lock, Building, CreditCard, Edit2, X, Check, ShieldCheck, Mail, Phone, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import apiClient from '../../services/apiClient';
@@ -12,9 +12,11 @@ const VendorProfile = () => {
     const [requestForm, setRequestForm] = useState({ reason: '', details: '' });
     const [showPasswordSuccess, setShowPasswordSuccess] = useState(false);
     const [showRequestSuccess, setShowRequestSuccess] = useState(false);
+    const [passwordError, setPasswordError] = useState('');
     const [requestLoading, setRequestLoading] = useState(false);
     const [requestError, setRequestError] = useState('');
 
+    const [profileNotice, setProfileNotice] = useState('');
     const [profile, setProfile] = useState(null);
     const [logoUrl, setLogoUrl] = useState(null);
 
@@ -67,8 +69,9 @@ const VendorProfile = () => {
 
     const handlePasswordChange = (e) => {
         e.preventDefault();
+        setPasswordError('');
         if (passwordForm.new !== passwordForm.confirm) {
-            alert(t('vendorProfile.password.mismatch'));
+            setPasswordError(t('vendorProfile.password.mismatch'));
             return;
         }
         
@@ -110,25 +113,35 @@ const VendorProfile = () => {
     };
 
     return (
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
             <div style={{ marginBottom: '2rem' }}>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.5rem' }}>
+                <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-color, #0F172A)', marginBottom: '0.5rem' }}>
                     {t('vendorProfile.title')}
                 </h1>
-                <p style={{ color: '#64748B' }}>{t('vendorProfile.subtitle')}</p>
+                <p style={{ color: 'var(--text-muted, #64748B)' }}>{t('vendorProfile.subtitle')}</p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+            {profileNotice && (
+                <div style={{ marginBottom: '1.5rem' }}>
+                    <MessageBanner
+                        variant="info"
+                        message={profileNotice}
+                        onClose={() => setProfileNotice('')}
+                    />
+                </div>
+            )}
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                    <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflow: 'hidden', border: '1px solid #E2E8F0' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <div style={{ backgroundColor: 'var(--card-bg, #ffffff)', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', overflow: 'hidden', border: '1px solid var(--border-color, #E2E8F0)' }}>
                         <div style={{ backgroundColor: '#0A3D62', height: '100px' }}></div>
-                        <div style={{ padding: '0 2rem 2rem', marginTop: '-50px', position: 'relative' }}>
+                        <div style={{ padding: '0 1.5rem 1.5rem', marginTop: '-50px', position: 'relative' }}>
                             <div style={{
                                 width: '100px', height: '100px',
-                                backgroundColor: 'white', borderRadius: '50%',
+                                backgroundColor: 'var(--card-bg, #ffffff)', borderRadius: '50%',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                color: '#0A3D62', border: '4px solid white',
+                                color: '#0A3D62', border: '4px solid var(--card-bg, #ffffff)',
                                 boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
                                 position: 'relative',
                                 overflow: 'hidden'
@@ -144,43 +157,44 @@ const VendorProfile = () => {
                                     position: 'absolute', bottom: 0, left: 0, right: 0,
                                     backgroundColor: 'rgba(0,0,0,0.5)', padding: '4px',
                                     display: 'flex', justifyContent: 'center', cursor: 'pointer'
-                                }} onClick={() => alert(t('vendorProfile.photoUpdateAlert'))}> 
+                                }} onClick={() => setProfileNotice(t('vendorProfile.photoUpdateAlert'))} title={t('vendorProfile.photoUpdateAlert')}> 
                                     <div style={{ width: '6px', height: '6px', backgroundColor: 'white', borderRadius: '50%' }}></div>
                                 </div>
                             </div>
                             <div style={{ marginTop: '1rem' }}>
-                                <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0F172A' }}>{profile?.firmName || '-'}</h2>
-                                <p style={{ color: '#64748B', fontSize: '0.9rem', marginBottom: '0.5rem' }}>{vendorIdLabel}</p>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-color, #0F172A)' }}>{profile?.firmName || '-'}</h2>
+                                <p style={{ color: 'var(--text-muted, #64748B)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>{vendorIdLabel}</p>
+                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                                     <span style={{
                                         backgroundColor: '#DCFCE7', color: '#166534',
                                         padding: '0.25rem 0.75rem', borderRadius: '100px',
-                                        fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem'
+                                        fontSize: '0.75rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem'
                                     }}>
                                         <ShieldCheck size={12} /> {t(`status.${profile?.status}`, { defaultValue: profile?.status || '-' })}
                                     </span>
                                 </div>
                             </div>
 
-                            <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#475569', fontSize: '0.9rem' }}>
-                                    <Mail size={16} /> {profile?.email || '-'}
+                            <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--text-color, #475569)', fontSize: '0.9rem', wordBreak: 'break-word' }}>
+                                    <Mail size={16} style={{ flexShrink: 0 }} /> <span>{profile?.email || '-'}</span>
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#475569', fontSize: '0.9rem' }}>
-                                    <Phone size={16} /> {profile?.mobile || '-'}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--text-color, #475569)', fontSize: '0.9rem', wordBreak: 'break-word' }}>
+                                    <Phone size={16} style={{ flexShrink: 0 }} /> <span>{profile?.mobile || '-'}</span>
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', color: '#475569', fontSize: '0.9rem' }}>
-                                    <MapPin size={16} style={{ marginTop: '2px' }} /> {addressLabel || '-'}
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', color: 'var(--text-color, #475569)', fontSize: '0.9rem', wordBreak: 'break-word' }}>
+                                    <MapPin size={16} style={{ marginTop: '2px', flexShrink: 0 }} /> <span>{addressLabel || '-'}</span>
                                 </div>
                             </div>
 
-                            <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid #F1F5F9' }}>
+                            <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color, #F1F5F9)' }}>
                                 <button
                                     onClick={() => setIsRequestModalOpen(true)}
+                                    className="touch-target"
                                     style={{
-                                        width: '100%', padding: '0.75rem', borderRadius: '6px',
-                                        border: '1px solid #E2E8F0', backgroundColor: 'white',
-                                        color: '#334155', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer',
+                                        width: '100%', minHeight: '44px', padding: '0.75rem', borderRadius: '6px',
+                                        border: '1px solid var(--border-color, #E2E8F0)', backgroundColor: 'var(--card-bg, #ffffff)',
+                                        color: 'var(--text-color, #334155)', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'
                                     }}
                                 >
@@ -190,16 +204,18 @@ const VendorProfile = () => {
                         </div>
                     </div>
 
-                    <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '2rem', border: '1px solid #E2E8F0' }}>
-                        <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ backgroundColor: 'var(--card-bg, #ffffff)', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', padding: '1.5rem', border: '1px solid var(--border-color, #E2E8F0)' }}>
+                        <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-color, #0F172A)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <Lock size={18} /> {t('vendorProfile.security')}
                         </h3>
                         <button
                             onClick={() => setIsPasswordModalOpen(true)}
+                            className="touch-target"
                             style={{
-                                width: '100%', padding: '0.75rem', borderRadius: '6px',
-                                backgroundColor: '#0F172A', color: 'white',
-                                border: 'none', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer'
+                                width: '100%', minHeight: '44px', padding: '0.75rem', borderRadius: '6px',
+                                backgroundColor: '#0A3D62', color: 'white',
+                                border: 'none', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center'
                             }}
                         >
                             {t('vendorProfile.password.change')}
@@ -207,10 +223,10 @@ const VendorProfile = () => {
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
-                    <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '2rem', border: '1px solid #E2E8F0' }}>
-                        <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ backgroundColor: 'var(--card-bg, #ffffff)', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', padding: '1.5rem', border: '1px solid var(--border-color, #E2E8F0)' }}>
+                        <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-color, #0F172A)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <ShieldCheck size={18} /> {t('vendorProfile.complianceDocuments')}
                         </h3>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -218,13 +234,13 @@ const VendorProfile = () => {
                             <ReadOnlyField label={t('vendorProfile.fields.gstin')} value={profile?.gstinNumber || '-'} />
                             <ReadOnlyField label={t('vendorProfile.fields.aadhaarLinked')} value={maskedAadhaar || '-'} />
                         </div>
-                        <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: '#F8FAFC', borderRadius: '6px', fontSize: '0.85rem', color: '#64748B', border: '1px dashed #CBD5E1' }}>
+                        <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: 'var(--body-bg, #F8FAFC)', borderRadius: '6px', fontSize: '0.85rem', color: 'var(--text-muted, #64748B)', border: '1px dashed var(--border-color, #CBD5E1)', lineHeight: 1.5 }}>
                             {t('vendorProfile.complianceNote')}
                         </div>
                     </div>
 
-                    <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '2rem', border: '1px solid #E2E8F0' }}>
-                        <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ backgroundColor: 'var(--card-bg, #ffffff)', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', padding: '1.5rem', border: '1px solid var(--border-color, #E2E8F0)' }}>
+                        <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-color, #0F172A)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <CreditCard size={18} /> {t('vendorProfile.financialDetails')}
                         </h3>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -239,16 +255,19 @@ const VendorProfile = () => {
                 <div style={{
                     position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
                     backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 100,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    padding: '1rem', overflowY: 'auto'
                 }}>
                     <div style={{
-                        backgroundColor: 'white', borderRadius: '12px', width: '100%', maxWidth: '400px',
-                        padding: '2rem', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+                        backgroundColor: 'var(--card-bg, #ffffff)', borderRadius: '12px', width: '100%', maxWidth: '400px',
+                        maxHeight: '90vh', overflowY: 'auto',
+                        padding: '1.5rem', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                        border: '1px solid var(--border-color, #E2E8F0)'
                     }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>{t('vendorProfile.password.change')}</h3>
-                            <button onClick={() => setIsPasswordModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                                <X size={24} color="#64748B" />
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-color, #0F172A)', margin: 0 }}>{t('vendorProfile.password.change')}</h3>
+                            <button onClick={() => setIsPasswordModalOpen(false)} className="touch-target" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <X size={24} color="var(--text-muted, #64748B)" />
                             </button>
                         </div>
 
@@ -263,41 +282,48 @@ const VendorProfile = () => {
                             </div>
                         ) : (
                             <form onSubmit={handlePasswordChange} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <MessageBanner
+                                    variant="error"
+                                    message={passwordError}
+                                    onClose={() => setPasswordError('')}
+                                />
                                 <div>
-                                    <label style={{ display: 'block', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700, color: '#64748B', marginBottom: '0.5rem' }}>{t('vendorProfile.password.current')}</label>
+                                    <label style={{ display: 'block', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted, #64748B)', marginBottom: '0.5rem' }}>{t('vendorProfile.password.current')}</label>
                                     <input
                                         type="password"
                                         required
                                         value={passwordForm.current}
                                         onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
-                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #CBD5E1', fontSize: '0.95rem' }}
+                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #CBD5E1)', backgroundColor: 'var(--card-bg, #ffffff)', color: 'var(--text-color, #0F172A)', fontSize: '1rem', boxSizing: 'border-box' }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700, color: '#64748B', marginBottom: '0.5rem' }}>{t('vendorProfile.password.new')}</label>
+                                    <label style={{ display: 'block', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted, #64748B)', marginBottom: '0.5rem' }}>{t('vendorProfile.password.new')}</label>
                                     <input
                                         type="password"
                                         required
                                         value={passwordForm.new}
                                         onChange={(e) => setPasswordForm({ ...passwordForm, new: e.target.value })}
-                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #CBD5E1', fontSize: '0.95rem' }}
+                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #CBD5E1)', backgroundColor: 'var(--card-bg, #ffffff)', color: 'var(--text-color, #0F172A)', fontSize: '1rem', boxSizing: 'border-box' }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700, color: '#64748B', marginBottom: '0.5rem' }}>{t('vendorProfile.password.confirm')}</label>
+                                    <label style={{ display: 'block', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted, #64748B)', marginBottom: '0.5rem' }}>{t('vendorProfile.password.confirm')}</label>
                                     <input
                                         type="password"
                                         required
                                         value={passwordForm.confirm}
                                         onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
-                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #CBD5E1', fontSize: '0.95rem' }}
+                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #CBD5E1)', backgroundColor: 'var(--card-bg, #ffffff)', color: 'var(--text-color, #0F172A)', fontSize: '1rem', boxSizing: 'border-box' }}
                                     />
                                 </div>
-                                <button type="submit" style={{
-                                    marginTop: '1rem',
+                                <button type="submit" className="touch-target" style={{
+                                    marginTop: '0.5rem',
+                                    minHeight: '44px',
                                     padding: '0.75rem', borderRadius: '6px',
-                                    backgroundColor: '#0F172A', color: 'white',
-                                    border: 'none', fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer'
+                                    backgroundColor: '#0A3D62', color: 'white',
+                                    border: 'none', fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
                                 }}>
                                     {t('vendorProfile.password.update')}
                                 </button>
@@ -311,16 +337,19 @@ const VendorProfile = () => {
                 <div style={{
                     position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
                     backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 100,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    padding: '1rem', overflowY: 'auto'
                 }}>
                     <div style={{
-                        backgroundColor: 'white', borderRadius: '12px', width: '100%', maxWidth: '500px',
-                        padding: '2rem', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+                        backgroundColor: 'var(--card-bg, #ffffff)', borderRadius: '12px', width: '100%', maxWidth: '500px',
+                        maxHeight: '90vh', overflowY: 'auto',
+                        padding: '1.5rem', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                        border: '1px solid var(--border-color, #E2E8F0)'
                     }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>{t('vendorProfile.requestProfileUpdate')}</h3>
-                            <button onClick={() => setIsRequestModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                                <X size={24} color="#64748B" />
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-color, #0F172A)', margin: 0 }}>{t('vendorProfile.requestProfileUpdate')}</h3>
+                            <button onClick={() => setIsRequestModalOpen(false)} className="touch-target" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <X size={24} color="var(--text-muted, #64748B)" />
                             </button>
                         </div>
 
@@ -332,7 +361,7 @@ const VendorProfile = () => {
                                     </div>
                                 </div>
                                 <p style={{ fontWeight: 600 }}>{t('vendorProfile.request.successTitle')}</p>
-                                <p style={{ fontSize: '0.9rem', color: '#64748B' }}>{t('vendorProfile.request.successSubtitle')}</p>
+                                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted, #64748B)' }}>{t('vendorProfile.request.successSubtitle')}</p>
                             </div>
                         ) : (
                             <form onSubmit={handleRequestSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -341,16 +370,16 @@ const VendorProfile = () => {
                                     message={requestError}
                                     onClose={() => setRequestError('')}
                                 />
-                                <div style={{ padding: '1rem', backgroundColor: '#F8FAFC', borderRadius: '6px', fontSize: '0.85rem', color: '#64748B', border: '1px solid #E2E8F0' }}>
+                                <div style={{ padding: '1rem', backgroundColor: 'var(--body-bg, #F8FAFC)', borderRadius: '6px', fontSize: '0.85rem', color: 'var(--text-muted, #64748B)', border: '1px solid var(--border-color, #E2E8F0)', lineHeight: 1.5 }}>
                                     {t('vendorProfile.request.note')}
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700, color: '#64748B', marginBottom: '0.5rem' }}>{t('vendorProfile.request.reasonLabel')}</label>
+                                    <label style={{ display: 'block', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted, #64748B)', marginBottom: '0.5rem' }}>{t('vendorProfile.request.reasonLabel')}</label>
                                     <select
                                         required
                                         value={requestForm.reason}
                                         onChange={(e) => setRequestForm({ ...requestForm, reason: e.target.value })}
-                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #CBD5E1', fontSize: '0.95rem' }}
+                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #CBD5E1)', backgroundColor: 'var(--card-bg, #ffffff)', color: 'var(--text-color, #0F172A)', fontSize: '1rem', boxSizing: 'border-box' }}
                                     >
                                         <option value="">{t('vendorProfile.request.selectReason')}</option>
                                         <option value="Incorrect Address">{t('vendorProfile.request.reasons.incorrectAddress')}</option>
@@ -361,21 +390,24 @@ const VendorProfile = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700, color: '#64748B', marginBottom: '0.5rem' }}>{t('vendorProfile.request.detailsLabel')}</label>
+                                    <label style={{ display: 'block', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted, #64748B)', marginBottom: '0.5rem' }}>{t('vendorProfile.request.detailsLabel')}</label>
                                     <textarea
                                         required
                                         rows={4}
                                         placeholder={t('vendorProfile.request.detailsPlaceholder')}
                                         value={requestForm.details}
                                         onChange={(e) => setRequestForm({ ...requestForm, details: e.target.value })}
-                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #CBD5E1', fontSize: '0.95rem', resize: 'vertical' }}
+                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #CBD5E1)', backgroundColor: 'var(--card-bg, #ffffff)', color: 'var(--text-color, #0F172A)', fontSize: '1rem', resize: 'vertical', boxSizing: 'border-box' }}
                                     />
                                 </div>
-                                <button type="submit" style={{
-                                    marginTop: '1rem',
+                                <button type="submit" className="touch-target" style={{
+                                    marginTop: '0.5rem',
+                                    minHeight: '44px',
                                     padding: '0.75rem', borderRadius: '6px',
-                                    backgroundColor: '#0F172A', color: 'white',
-                                    border: 'none', fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer'
+                                    backgroundColor: '#0A3D62', color: 'white',
+                                    border: 'none', fontWeight: 600, fontSize: '0.95rem', cursor: requestLoading ? 'not-allowed' : 'pointer',
+                                    opacity: requestLoading ? 0.7 : 1,
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
                                 }} disabled={requestLoading}>
                                     {requestLoading ? 'Submitting...' : t('vendorProfile.request.submit')}
                                 </button>
@@ -390,11 +422,12 @@ const VendorProfile = () => {
 
 const ReadOnlyField = ({ label, value, isSecure }) => (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 600, textTransform: 'uppercase', marginBottom: '0.25rem' }}>{label}</span>
+        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted, #64748B)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '0.25rem' }}>{label}</span>
         <div style={{
-            fontSize: '1rem', fontWeight: 500, color: '#334155',
-            backgroundColor: '#F8FAFC', padding: '0.75rem', borderRadius: '6px',
-            border: '1px solid #E2E8F0', fontFamily: isSecure ? 'monospace' : 'inherit'
+            fontSize: '1rem', fontWeight: 500, color: 'var(--text-color, #334155)',
+            backgroundColor: 'var(--body-bg, #F8FAFC)', padding: '0.75rem', borderRadius: '6px',
+            border: '1px solid var(--border-color, #E2E8F0)', fontFamily: isSecure ? 'monospace' : 'inherit',
+            wordBreak: 'break-word'
         }}>
             {value}
         </div>

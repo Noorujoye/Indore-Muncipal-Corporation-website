@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, FileText, ShieldCheck, XCircle, CheckCircle } from 'lucide-react';
 import apiClient from '../../services/apiClient';
+import { useTranslation } from 'react-i18next';
 
 const InvoiceDecision = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { id } = useParams();
     const [invoiceData, setInvoiceData] = useState(null);
@@ -53,13 +55,14 @@ const InvoiceDecision = () => {
             setTimeout(() => window.URL.revokeObjectURL(url), 1000);
         } catch (e) {
             console.error('Failed to download document', e);
-            alert('Failed to download document');
+            alert(t('invoiceDecision.downloadFailed'));
         }
     };
 
     const handleApprove = async () => {
+        if (processing) return;
         if (!role) return;
-        if (!confirm('Confirm approval? This cannot be undone.')) return;
+        if (!confirm(t('invoiceDecision.confirmApproval'))) return;
         setProcessing(true);
         try {
             const roleKey = String(role).toLowerCase();
@@ -73,12 +76,13 @@ const InvoiceDecision = () => {
     };
 
     const handleReject = async () => {
+        if (processing) return;
         if (!role) return;
         if (!remarks.trim()) {
-            alert('Usage error: remarks are required for rejection.');
+            alert(t('invoiceDecision.remarksRequired'));
             return;
         }
-        if (!confirm('Confirm rejection? This cannot be undone.')) return;
+        if (!confirm(t('invoiceDecision.confirmRejection'))) return;
         setProcessing(true);
         try {
             const roleKey = String(role).toLowerCase();
@@ -92,7 +96,8 @@ const InvoiceDecision = () => {
     };
 
     const handleMarkPaid = async () => {
-        if (!confirm('Confirm payment disbursement? This marks the invoice as PAID and completes the transaction.')) return;
+        if (processing) return;
+        if (!confirm(t('invoiceDecision.confirmDisbursement'))) return;
         setProcessing(true);
         try {
             await apiClient.post(`/approver/invoices/${id}/mark-paid`);
@@ -104,7 +109,7 @@ const InvoiceDecision = () => {
         }
     };
 
-    if (loading) return <div style={{ padding: '2rem' }}>Loading Invoice Details...</div>;
+    if (loading) return <div style={{ padding: '2rem' }}>{t('invoiceDecision.loading')}</div>;
     if (error) return <div style={{ padding: '2rem', color: '#DC2626' }}>{error}</div>;
     if (!invoiceData) return null;
 
@@ -139,10 +144,10 @@ const InvoiceDecision = () => {
         : [];
 
     const approveLabel = role === 'APPROVER'
-        ? 'APPROVE FOR PAYMENT'
+        ? t('invoiceDecision.approveForPayment')
         : role === 'VERIFIER'
-            ? (currentStatus === 'APPROVER_REJECTED' ? 'RE-VERIFY & FORWARD' : 'VERIFY & FORWARD')
-            : 'FORWARD TO VERIFIER';
+            ? (currentStatus === 'APPROVER_REJECTED' ? t('invoiceDecision.reverifyAndForward') : t('invoiceDecision.verifyAndForward'))
+            : t('invoiceDecision.forwardToVerifier');
 
     return (
         <div style={{ paddingBottom: '4rem' }}>
@@ -151,55 +156,55 @@ const InvoiceDecision = () => {
                 style={{
                     display: 'flex', alignItems: 'center', gap: '0.5rem',
                     background: 'none', border: 'none', cursor: 'pointer',
-                    color: '#64748B', fontWeight: 600, marginBottom: '1.5rem', fontSize: '0.9rem'
+                    color: 'var(--text-muted, #64748B)', fontWeight: 600, marginBottom: '1.5rem', fontSize: '0.9rem'
                 }}
             >
-                <ArrowLeft size={16} /> Back to Queue
+                <ArrowLeft size={16} /> {t('invoiceDecision.backToQueue')}
             </button>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 350px', gap: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '1.5rem', alignItems: 'start' }}>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
                     <div className="gov-card">
                         <div className="gov-card-header">
-                            INVOICE SUMMARY: {invoiceSummary.invoiceNumber}
+                            {t('invoiceDecision.invoiceSummary')}: {invoiceSummary.invoiceNumber}
                         </div>
                         <div className="gov-card-body">
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
                                 <div>
-                                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748B', marginBottom: '0.25rem' }}>VENDOR NAME</label>
-                                    <div style={{ fontSize: '1rem', fontWeight: 600 }}>{invoiceSummary.vendorName}</div>
+                                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted, #64748B)', marginBottom: '0.25rem' }}>{t('invoiceDecision.vendorName')}</label>
+                                    <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-color)' }}>{invoiceSummary.vendorName}</div>
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748B', marginBottom: '0.25rem' }}>TENDER REFERENCE</label>
-                                    <div style={{ fontSize: '1rem' }}>{invoiceSummary.tenderReference}</div>
+                                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted, #64748B)', marginBottom: '0.25rem' }}>{t('invoiceDecision.tenderReference')}</label>
+                                    <div style={{ fontSize: '1rem', color: 'var(--text-color)' }}>{invoiceSummary.tenderReference || '-'}</div>
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748B', marginBottom: '0.25rem' }}>BASE AMOUNT</label>
-                                    <div style={{ fontSize: '1rem' }}>₹ {invoiceSummary.baseAmount.toLocaleString()}</div>
+                                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted, #64748B)', marginBottom: '0.25rem' }}>{t('invoiceDecision.baseAmount')}</label>
+                                    <div style={{ fontSize: '1rem', color: 'var(--text-color)' }}>₹ {invoiceSummary.baseAmount.toLocaleString()}</div>
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#64748B', marginBottom: '0.25rem' }}>SUBMITTED DATE</label>
-                                    <div style={{ fontSize: '1rem' }}>{submittedDateFormatted}</div>
+                                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted, #64748B)', marginBottom: '0.25rem' }}>{t('invoiceDecision.submittedDate')}</label>
+                                    <div style={{ fontSize: '1rem', color: 'var(--text-color)' }}>{submittedDateFormatted}</div>
                                 </div>
                             </div>
 
-                            <div style={{ backgroundColor: '#F8FAFC', padding: '1rem', borderRadius: '4px', border: '1px solid #E2E8F0' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ fontWeight: 600, color: '#475569' }}>TOTAL AMOUNT (Inc. GST)</span>
-                                    <span style={{ fontWeight: 700, fontSize: '1.25rem', color: '#003366' }}>₹ {invoiceSummary.totalAmount.toLocaleString()}</span>
+                            <div style={{ backgroundColor: 'var(--gray-100)', padding: '1rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                    <span style={{ fontWeight: 600, color: 'var(--text-color)' }}>{t('invoiceDecision.totalAmountIncGst')}</span>
+                                    <span style={{ fontWeight: 700, fontSize: '1.25rem', color: 'var(--primary)' }}>₹ {invoiceSummary.totalAmount.toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="gov-card">
-                        <div className="gov-card-header">ATTACHMENTS</div>
+                        <div className="gov-card-header">{t('invoiceDecision.attachments')}</div>
                         <div className="gov-card-body" style={{ padding: '1rem' }}>
                             <button
-                                className="btn-gov btn-outline"
-                                style={{ width: '100%', justifyContent: 'flex-start' }}
+                                className="btn-gov btn-outline touch-target"
+                                style={{ width: '100%', minHeight: '44px', justifyContent: 'flex-start' }}
                                 disabled={documents.length === 0}
                                 onClick={async () => {
                                     if (documents.length === 0) return;
@@ -207,36 +212,38 @@ const InvoiceDecision = () => {
                                     await downloadDocument(doc.id, doc.fileName || 'invoice');
                                 }}
                             >
-                                <FileText size={16} style={{ marginRight: '0.5rem' }} /> {documents.length ? 'Download Invoice Document' : 'No Documents Uploaded'}
+                                <FileText size={16} style={{ marginRight: '0.5rem' }} /> {documents.length ? t('invoiceDecision.downloadInvoice') : t('invoiceDecision.noDocuments')}
                             </button>
                         </div>
                     </div>
 
                     <div className="gov-card">
-                        <div className="gov-card-header">AUDIT LOG</div>
-                        <div className="gov-card-body">
-                            <table className="gov-table">
-                                <thead>
-                                    <tr>
-                                        <th style={{ padding: '0.5rem' }}>STAGE</th>
-                                        <th style={{ padding: '0.5rem' }}>ACTION</th>
-                                        <th style={{ padding: '0.5rem' }}>ACTOR</th>
-                                        <th style={{ padding: '0.5rem' }}>REMARKS</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {auditTrail.map((step, idx) => (
-                                        <tr key={idx}>
-                                            <td style={{ padding: '0.75rem 0.5rem', fontSize: '0.8rem', fontWeight: 600 }}>{step.stage || '-'}</td>
-                                            <td style={{ padding: '0.75rem 0.5rem', fontSize: '0.8rem' }}>{step.action || 'SUBMITTED'}</td>
-                                            <td style={{ padding: '0.75rem 0.5rem', fontSize: '0.8rem' }}>{step.actorName || '-'}</td>
-                                            <td style={{ padding: '0.75rem 0.5rem', fontSize: '0.8rem', color: '#475569', fontStyle: step.remarks ? 'normal' : 'italic' }}>
-                                                {step.remarks || '-'}
-                                            </td>
+                        <div className="gov-card-header">{t('invoiceDecision.auditLog')}</div>
+                        <div className="gov-card-body" style={{ padding: 0 }}>
+                            <div className="gov-table-container">
+                                <table className="gov-table" style={{ margin: 0 }}>
+                                    <thead>
+                                        <tr>
+                                            <th style={{ padding: '0.75rem' }}>{t('invoiceDecision.stage')}</th>
+                                            <th style={{ padding: '0.75rem' }}>{t('invoiceDecision.action')}</th>
+                                            <th style={{ padding: '0.75rem' }}>{t('invoiceDecision.actor')}</th>
+                                            <th style={{ padding: '0.75rem' }}>{t('invoiceDecision.remarks')}</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {auditTrail.map((step, idx) => (
+                                            <tr key={idx}>
+                                                <td style={{ padding: '0.75rem', fontSize: '0.8rem', fontWeight: 600 }}>{step.stage || '-'}</td>
+                                                <td style={{ padding: '0.75rem', fontSize: '0.8rem' }}>{step.action || 'SUBMITTED'}</td>
+                                                <td style={{ padding: '0.75rem', fontSize: '0.8rem' }}>{step.actorName || '-'}</td>
+                                                <td style={{ padding: '0.75rem', fontSize: '0.8rem', color: 'var(--text-muted, #64748B)', fontStyle: step.remarks ? 'normal' : 'italic' }}>
+                                                    {step.remarks || '-'}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
@@ -244,7 +251,7 @@ const InvoiceDecision = () => {
 
                 <div>
                     {isPaid ? (
-                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: '#86EFAC', backgroundColor: '#F0FDF4' }}>
+                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: '#86EFAC', backgroundColor: 'var(--card-bg)' }}>
                             <div className="gov-card-header" style={{ backgroundColor: '#15803D', color: 'white' }}>
                                 PAYMENT SETTLED
                             </div>
@@ -253,81 +260,81 @@ const InvoiceDecision = () => {
                                 <div style={{ fontWeight: 700, fontSize: '1rem', color: '#166534', marginBottom: '0.5rem' }}>
                                     Invoice Paid & Closed
                                 </div>
-                                <p style={{ fontSize: '0.85rem', color: '#15803D', lineHeight: 1.4 }}>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted, #64748B)', lineHeight: 1.4 }}>
                                     This invoice has been disbursed and marked as PAID. No further actions can be taken.
                                 </p>
                             </div>
                         </div>
                     ) : canApproverPay ? (
-                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: '#CBD5E1', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
-                            <div className="gov-card-header" style={{ backgroundColor: '#003366', color: 'white' }}>
-                                DISBURSE PAYMENT
+                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: 'var(--border-color)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+                            <div className="gov-card-header" style={{ backgroundColor: 'var(--primary)', color: 'white' }}>
+                                {t('invoiceDecision.markAsPaid')}
                             </div>
                             <div className="gov-card-body">
-                                <p style={{ fontSize: '0.85rem', color: '#475569', marginBottom: '1.25rem', lineHeight: 1.5 }}>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted, #64748B)', marginBottom: '1.25rem', lineHeight: 1.5 }}>
                                     This invoice has received all municipal approvals and is ready for payment disbursement.
                                 </p>
-                                <button onClick={handleMarkPaid} disabled={processing} className="btn-gov btn-success" style={{ width: '100%', padding: '1rem' }}>
-                                    <ShieldCheck size={18} style={{ marginRight: '0.5rem' }} /> MARK AS PAID
+                                <button onClick={handleMarkPaid} disabled={processing} className="btn-gov btn-success touch-target" style={{ width: '100%', minHeight: '48px', padding: '1rem' }}>
+                                    <ShieldCheck size={18} style={{ marginRight: '0.5rem' }} /> {t('invoiceDecision.markAsPaid')}
                                 </button>
                             </div>
                         </div>
                     ) : canStandardAct ? (
-                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: '#CBD5E1', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
-                            <div className="gov-card-header" style={{ backgroundColor: '#003366', color: 'white' }}>
-                                OFFICIAL ACTION
+                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: 'var(--border-color)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+                            <div className="gov-card-header" style={{ backgroundColor: 'var(--primary)', color: 'white' }}>
+                                {t('invoiceDecision.decisionAction')}
                             </div>
                             <div className="gov-card-body">
                                 <div style={{ marginBottom: '1.5rem' }}>
-                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.5rem' }}>
-                                        Remarks {currentStatus === 'APPROVER_REJECTED' && <span style={{ color: '#DC2626' }}>*</span>}
+                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-color)', marginBottom: '0.5rem' }}>
+                                        {t('invoiceDecision.remarks')} {currentStatus === 'APPROVER_REJECTED' && <span style={{ color: '#DC2626' }}>*</span>}
                                     </label>
                                     <textarea
                                         className="gov-input"
                                         rows="4"
-                                        placeholder="Enter official remarks..."
+                                        placeholder={t('invoiceDecision.enterRemarks')}
                                         value={remarks}
                                         onChange={(e) => setRemarks(e.target.value)}
-                                        style={{ resize: 'vertical', minHeight: '100px' }}
+                                        style={{ resize: 'vertical', minHeight: '100px', fontSize: '1rem' }}
                                     />
                                 </div>
 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                    <button onClick={handleApprove} disabled={processing} className="btn-gov btn-success" style={{ width: '100%', padding: '1rem' }}>
+                                    <button onClick={handleApprove} disabled={processing} className="btn-gov btn-success touch-target" style={{ width: '100%', minHeight: '48px', padding: '0.85rem' }}>
                                         <ShieldCheck size={18} style={{ marginRight: '0.5rem' }} /> {approveLabel}
                                     </button>
 
-                                    <button onClick={handleReject} disabled={processing} className="btn-gov btn-danger" style={{ width: '100%' }}>
-                                        <XCircle size={16} style={{ marginRight: '0.5rem' }} /> REJECT INVOICE
+                                    <button onClick={handleReject} disabled={processing} className="btn-gov btn-danger touch-target" style={{ width: '100%', minHeight: '48px', padding: '0.85rem' }}>
+                                        <XCircle size={16} style={{ marginRight: '0.5rem' }} /> {t('invoiceDecision.reject')}
                                     </button>
                                 </div>
                             </div>
                         </div>
                     ) : isRejected ? (
-                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: '#FECACA', backgroundColor: '#FEF2F2' }}>
+                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: '#FECACA', backgroundColor: 'var(--card-bg)' }}>
                             <div className="gov-card-header" style={{ backgroundColor: '#B91C1C', color: 'white' }}>
                                 INVOICE REJECTED
                             </div>
                             <div className="gov-card-body" style={{ textAlign: 'center', padding: '1.5rem' }}>
                                 <XCircle size={40} color="#B91C1C" style={{ margin: '0 auto 1rem' }} />
-                                <div style={{ fontWeight: 700, fontSize: '1rem', color: '#991B1B', marginBottom: '0.5rem' }}>
+                                <div style={{ fontWeight: 700, fontSize: '1rem', color: '#EF4444', marginBottom: '0.5rem' }}>
                                     Status: {currentStatus}
                                 </div>
-                                <p style={{ fontSize: '0.85rem', color: '#B91C1C', lineHeight: 1.4 }}>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted, #64748B)', lineHeight: 1.4 }}>
                                     This invoice was rejected during review and cannot be modified.
                                 </p>
                             </div>
                         </div>
                     ) : (
-                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: '#E2E8F0', backgroundColor: '#F8FAFC' }}>
-                            <div className="gov-card-header" style={{ backgroundColor: '#475569', color: 'white' }}>
+                        <div className="gov-card" style={{ position: 'sticky', top: '90px', borderColor: 'var(--border-color)', backgroundColor: 'var(--card-bg)' }}>
+                            <div className="gov-card-header" style={{ backgroundColor: 'var(--gray-800)', color: 'white' }}>
                                 STATUS: {currentStatus}
                             </div>
                             <div className="gov-card-body" style={{ textAlign: 'center', padding: '1.5rem' }}>
-                                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: '#334155', marginBottom: '0.5rem' }}>
+                                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-color)', marginBottom: '0.5rem' }}>
                                     Pending Subsequent Stage
                                 </div>
-                                <p style={{ fontSize: '0.85rem', color: '#64748B', lineHeight: 1.4 }}>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted, #64748B)', lineHeight: 1.4 }}>
                                     No immediate actions required from your role for this invoice.
                                 </p>
                             </div>

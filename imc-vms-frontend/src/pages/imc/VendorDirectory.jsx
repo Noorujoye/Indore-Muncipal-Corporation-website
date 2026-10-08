@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Search, Ban, CheckCircle, Building } from 'lucide-react';
 import apiClient from '../../services/apiClient';
 import Modal from '../../components/common/Modal';
 
 const VendorDirectory = () => {
+    const { t } = useTranslation();
     const [vendors, setVendors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -196,100 +198,178 @@ const VendorDirectory = () => {
         String(v.email || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    if (loading) return <div style={{ padding: '2rem' }}>Loading Directory...</div>;
+    if (loading) return <div style={{ padding: '2rem', color: 'var(--text-muted, #64748B)' }}>{t('vendorDirectory.loading')}</div>;
 
     return (
         <div>
-            <div className="gov-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="gov-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                    <h1>Vendor Directory</h1>
-                    <p>Manage all registered vendors and their account status.</p>
+                    <h1 style={{ color: 'var(--text-color, #0F172A)' }}>{t('vendorDirectory.title')}</h1>
+                    <p style={{ color: 'var(--text-muted, #64748B)' }}>{t('vendorDirectory.subtitle')}</p>
                 </div>
-                <div style={{ position: 'relative', width: '300px' }}>
-                    <Search size={18} color="#94A3B8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                <div style={{ position: 'relative', width: 'min(100%, 300px)' }}>
+                    <Search size={18} color="var(--text-muted, #94A3B8)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                     <input
                         type="text"
-                        placeholder="Search Active Vendors..."
+                        placeholder={t('vendorDirectory.searchPlaceholder')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="gov-input"
-                        style={{ paddingLeft: '2.5rem' }}
+                        style={{ paddingLeft: '2.5rem', width: '100%', boxSizing: 'border-box' }}
                     />
                 </div>
             </div>
 
             <div className="gov-table-container">
-                <table className="gov-table">
-                    <thead>
-                        <tr>
-                            <th>FIRM IDENTITY</th>
-                            <th>TYPE</th>
-                            <th>CONTACT</th>
-                            <th>JOINED DATE</th>
-                            <th>STATUS</th>
-                            <th style={{ textAlign: 'right' }}>ACTION</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredVendors.map(vendor => (
-                            <tr key={vendor.id}>
-                                <td>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                        <div style={{
-                                            width: '32px',
-                                            height: '32px',
-                                            padding: '0.5rem',
-                                            backgroundColor: '#F1F5F9',
-                                            borderRadius: '4px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            overflow: 'hidden'
-                                        }}>
-                                            {logoUrlsByVendorId[vendor.id] ? (
-                                                <img
-                                                    src={logoUrlsByVendorId[vendor.id]}
-                                                    alt={vendor.firmName}
-                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                />
-                                            ) : (
-                                                <Building size={16} color="#475569" />
-                                            )}
-                                        </div>
-                                        <div>
-                                            <div style={{ fontWeight: 600, color: '#0F172A' }}>{vendor.firmName}</div>
-                                            <div style={{ fontSize: '0.75rem', color: '#64748B' }}>{vendor.id}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>{vendor.type}</td>
-                                <td style={{ color: '#003366' }}>{vendor.email}</td>
-                                <td>{vendor.joined && !Number.isNaN(new Date(vendor.joined).getTime()) ? new Date(vendor.joined).toLocaleDateString() : '-'}</td>
-                                <td>
-                                    <span className={`gov-badge ${vendor.status === 'ACTIVE' ? 'gov-badge-success' : 'gov-badge-danger'}`}>
-                                        {vendor.status}
-                                    </span>
-                                </td>
-                                <td style={{ textAlign: 'right' }}>
-                                    <button
-                                        onClick={() => openVendorView(vendor.id)}
-                                        className="btn-gov btn-outline"
-                                        style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', marginRight: '0.5rem' }}
-                                    >
-                                        View
-                                    </button>
-                                    <button
-                                        onClick={() => handleToggleStatus(vendor.id, vendor.status)}
-                                        className={`btn-gov ${vendor.status === 'ACTIVE' ? 'btn-danger' : 'btn-success'}`}
-                                        style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}
-                                    >
-                                        {vendor.status === 'ACTIVE' ? <><Ban size={12} style={{ marginRight: '4px' }} /> Block</> : <><CheckCircle size={12} style={{ marginRight: '4px' }} /> Activate</>}
-                                    </button>
-                                </td>
+                <div className="desktop-only">
+                    <table className="gov-table">
+                        <thead>
+                            <tr>
+                                <th>{t('vendorDirectory.table.firm')}</th>
+                                <th>{t('vendorDirectory.table.type')}</th>
+                                <th>{t('vendorDirectory.table.contact', { defaultValue: 'CONTACT' })}</th>
+                                <th>{t('vendorDirectory.table.joined')}</th>
+                                <th>{t('vendorDirectory.table.status')}</th>
+                                <th style={{ textAlign: 'right' }}>{t('vendorDirectory.table.actions')}</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {filteredVendors.map(vendor => (
+                                <tr key={vendor.id}>
+                                    <td>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                            <div style={{
+                                                width: '32px',
+                                                height: '32px',
+                                                padding: '0.5rem',
+                                                backgroundColor: 'var(--body-bg, #F1F5F9)',
+                                                borderRadius: '4px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                overflow: 'hidden'
+                                            }}>
+                                                {logoUrlsByVendorId[vendor.id] ? (
+                                                    <img
+                                                        src={logoUrlsByVendorId[vendor.id]}
+                                                        alt={vendor.firmName}
+                                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                    />
+                                                ) : (
+                                                    <Building size={16} color="var(--text-muted, #475569)" />
+                                                )}
+                                            </div>
+                                            <div>
+                                                <div style={{ fontWeight: 600, color: 'var(--text-color, #0F172A)' }}>{vendor.firmName}</div>
+                                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted, #64748B)' }}>{vendor.id}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{vendor.type}</td>
+                                    <td style={{ color: 'var(--text-color, #003366)' }}>{vendor.email}</td>
+                                    <td>{vendor.joined && !Number.isNaN(new Date(vendor.joined).getTime()) ? new Date(vendor.joined).toLocaleDateString() : '-'}</td>
+                                    <td>
+                                        <span className={`gov-badge ${vendor.status === 'ACTIVE' ? 'gov-badge-success' : 'gov-badge-danger'}`}>
+                                            {vendor.status}
+                                        </span>
+                                    </td>
+                                    <td style={{ textAlign: 'right' }}>
+                                        <button
+                                            onClick={() => openVendorView(vendor.id)}
+                                            className="btn-gov btn-outline touch-target"
+                                            style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', marginRight: '0.5rem', minHeight: '36px' }}
+                                        >
+                                            {t('vendorDirectory.actions.view')}
+                                        </button>
+                                        <button
+                                            onClick={() => handleToggleStatus(vendor.id, vendor.status)}
+                                            className={`btn-gov ${vendor.status === 'ACTIVE' ? 'btn-danger' : 'btn-success'} touch-target`}
+                                            style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', minHeight: '36px' }}
+                                        >
+                                            {vendor.status === 'ACTIVE' ? <><Ban size={12} style={{ marginRight: '4px' }} /> {t('vendorDirectory.actions.block')}</> : <><CheckCircle size={12} style={{ marginRight: '4px' }} /> {t('vendorDirectory.actions.activate')}</>}
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="mobile-only mobile-card-list" style={{ padding: '0.75rem' }}>
+                    {filteredVendors.map(vendor => (
+                        <div key={vendor.id} className="mobile-data-card">
+                            <div className="mobile-data-card__row">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <div style={{
+                                        width: '28px',
+                                        height: '28px',
+                                        backgroundColor: 'var(--body-bg, #F1F5F9)',
+                                        borderRadius: '4px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        overflow: 'hidden'
+                                    }}>
+                                        {logoUrlsByVendorId[vendor.id] ? (
+                                            <img
+                                                src={logoUrlsByVendorId[vendor.id]}
+                                                alt={vendor.firmName}
+                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                            />
+                                        ) : (
+                                            <Building size={14} color="var(--text-muted, #475569)" />
+                                        )}
+                                    </div>
+                                    <span style={{ fontWeight: 700, color: 'var(--text-color, #0F172A)' }}>{vendor.firmName}</span>
+                                </div>
+                                <span className={`gov-badge ${vendor.status === 'ACTIVE' ? 'gov-badge-success' : 'gov-badge-danger'}`}>
+                                    {vendor.status}
+                                </span>
+                            </div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted, #64748B)', margin: '0.35rem 0' }}>
+                                ID: {vendor.id} • Type: {vendor.type}
+                            </div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text-color, #334155)', marginBottom: '0.75rem', wordBreak: 'break-word' }}>
+                                {vendor.email}
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                                <button
+                                    onClick={() => openVendorView(vendor.id)}
+                                    className="btn-gov btn-outline touch-target"
+                                    style={{
+                                        width: '100%',
+                                        minHeight: '44px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '0.9rem'
+                                    }}
+                                >
+                                    {t('vendorDirectory.actions.view')}
+                                </button>
+                                <button
+                                    onClick={() => handleToggleStatus(vendor.id, vendor.status)}
+                                    className={`btn-gov ${vendor.status === 'ACTIVE' ? 'btn-danger' : 'btn-success'} touch-target`}
+                                    style={{
+                                        width: '100%',
+                                        minHeight: '44px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '0.9rem'
+                                    }}
+                                >
+                                    {vendor.status === 'ACTIVE' ? <><Ban size={14} style={{ marginRight: '4px' }} /> {t('vendorDirectory.actions.block')}</> : <><CheckCircle size={14} style={{ marginRight: '4px' }} /> {t('vendorDirectory.actions.activate')}</>}
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                    {filteredVendors.length === 0 && (
+                        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted, #94A3B8)' }}>
+                            {t('vendorDirectory.empty')}
+                        </div>
+                    )}
+                </div>
             </div>
 
             <Modal
@@ -303,7 +383,7 @@ const VendorDirectory = () => {
                 maxWidth="44rem"
             >
                 {detailsLoading ? (
-                    <div style={{ color: 'var(--gray-700)' }}>Loading...</div>
+                    <div style={{ color: 'var(--text-muted, #64748B)' }}>Loading...</div>
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                         <div
@@ -355,13 +435,13 @@ const VendorDirectory = () => {
                             </table>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.25rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
                             <button
                                 type="button"
-                                className="btn-gov btn-outline"
+                                className="btn-gov btn-outline touch-target"
                                 onClick={() => setViewOpen(false)}
                                 disabled={resetLoading}
-                                style={{ padding: '0.5rem 0.9rem', fontSize: '0.85rem' }}
+                                style={{ padding: '0.5rem 0.9rem', fontSize: '0.85rem', minHeight: '44px' }}
                             >
                                 Close
                             </button>
@@ -369,19 +449,19 @@ const VendorDirectory = () => {
                                 <>
                                     <button
                                         type="button"
-                                        className="btn-gov btn-outline"
+                                        className="btn-gov btn-outline touch-target"
                                         onClick={() => handleResolveProfileRequest('reject')}
                                         disabled={profileReqLoading || resetLoading}
-                                        style={{ padding: '0.5rem 0.9rem', fontSize: '0.85rem' }}
+                                        style={{ padding: '0.5rem 0.9rem', fontSize: '0.85rem', minHeight: '44px' }}
                                     >
                                         {profileReqLoading ? 'Working...' : 'Reject Request'}
                                     </button>
                                     <button
                                         type="button"
-                                        className="btn-gov btn-success"
+                                        className="btn-gov btn-success touch-target"
                                         onClick={() => handleResolveProfileRequest('resolve')}
                                         disabled={profileReqLoading || resetLoading}
-                                        style={{ padding: '0.5rem 0.9rem', fontSize: '0.85rem' }}
+                                        style={{ padding: '0.5rem 0.9rem', fontSize: '0.85rem', minHeight: '44px' }}
                                     >
                                         {profileReqLoading ? 'Working...' : 'Resolve Request'}
                                     </button>
@@ -389,10 +469,10 @@ const VendorDirectory = () => {
                             ) : null}
                             <button
                                 type="button"
-                                className="btn-gov btn-primary"
+                                className="btn-gov btn-primary touch-target"
                                 onClick={handleResetCredentials}
                                 disabled={resetLoading || profileReqLoading}
-                                style={{ padding: '0.5rem 0.9rem', fontSize: '0.85rem' }}
+                                style={{ padding: '0.5rem 0.9rem', fontSize: '0.85rem', minHeight: '44px' }}
                             >
                                 {resetLoading ? 'Sending...' : 'Send Password Again'}
                             </button>

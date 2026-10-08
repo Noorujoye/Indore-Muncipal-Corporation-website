@@ -1,4 +1,4 @@
-﻿import { Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const VendorStepper = ({ currentStep }) => {
@@ -12,7 +12,7 @@ const VendorStepper = ({ currentStep }) => {
     const progress = (currentStep - 1) / (steps.length - 1);
 
     return (
-        <div style={{ marginBottom: '2.25rem' }}>
+        <div style={{ marginBottom: 'clamp(3.5rem, 8vw, 4.25rem)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative' }}>
                 <div style={{
                     position: 'absolute',
@@ -72,19 +72,19 @@ const VendorStepper = ({ currentStep }) => {
                             </div>
                             <span style={{
                                 position: 'absolute',
-                                top: '56px',
+                                top: '48px',
                                 left: isFirst ? 0 : isLast ? 'auto' : '50%',
                                 right: isLast ? 0 : 'auto',
                                 transform: isFirst || isLast ? 'none' : 'translateX(-50%)',
-                                fontSize: '0.875rem',
+                                fontSize: 'clamp(0.72rem, 2.2vw, 0.875rem)',
                                 fontWeight: status === 'active' ? 700 : 500,
                                 color: status === 'active' ? 'var(--primary)' : 'var(--gray-600)',
                                 transition: 'color var(--transition-normal)',
                                 textAlign: isFirst ? 'left' : isLast ? 'right' : 'center',
                                 width: 'max-content',
-                                maxWidth: '240px',
+                                maxWidth: 'clamp(80px, 25vw, 180px)',
                                 whiteSpace: 'normal',
-                                lineHeight: 1.25
+                                lineHeight: 1.2
                             }}>
                                 {step.title}
                             </span>

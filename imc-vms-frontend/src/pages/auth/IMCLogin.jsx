@@ -26,6 +26,7 @@ const IMCLogin = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (loading) return;
         setLoading(true);
         setError('');
 
@@ -121,7 +122,14 @@ const IMCLogin = () => {
                 <div style={{ marginBottom: '1.5rem' }}>
                     <label className="auth-label auth-labelRow">
                         <span>{t('auth.password')}</span>
-                        <a href="#" className="auth-link">{t('auth.forgotPassword')}</a>
+                        <button
+                            type="button"
+                            className="auth-link"
+                            onClick={() => setError(t('auth.officialResetNotice'))}
+                            style={{ background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}
+                        >
+                            {t('auth.forgotPassword')}
+                        </button>
                     </label>
                     <div className="auth-inputWrap">
                         <input

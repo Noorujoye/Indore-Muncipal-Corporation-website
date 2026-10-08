@@ -1,4 +1,4 @@
-﻿import { Landmark, CreditCard, CheckCircle, AlertCircle } from 'lucide-react';
+import { Landmark, CreditCard, CheckCircle, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const InputField = ({ label, type = "text", placeholder, value, onChange, icon: Icon, required = false, error }) => (
@@ -74,11 +74,14 @@ const ReviewRow = ({ label, value }) => (
     <div style={{
         display: 'flex',
         justifyContent: 'space-between',
+        alignItems: 'baseline',
         padding: '0.75rem 0',
-        borderBottom: '1px solid var(--border-color)'
+        borderBottom: '1px solid var(--border-color)',
+        gap: '0.75rem',
+        flexWrap: 'wrap'
     }}>
-        <span style={{ color: 'var(--gray-600)', fontSize: '0.9rem', fontWeight: 500 }}>{label}</span>
-        <span style={{ color: 'var(--text-color)', fontWeight: 600 }}>{value || '-'}</span>
+        <span style={{ color: 'var(--gray-600)', fontSize: '0.9rem', fontWeight: 500, minWidth: '110px' }}>{label}</span>
+        <span style={{ color: 'var(--text-color)', fontWeight: 600, wordBreak: 'break-word', textAlign: 'right', flex: 1 }}>{value || '-'}</span>
     </div>
 );
 
@@ -105,7 +108,7 @@ const BankDetailsReview = ({ bankData, updateBankData, allData, errors = {} }) =
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '2rem', marginBottom: '3rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 'clamp(1rem, 3vw, 2rem)', marginBottom: '3rem' }}>
                 <InputField
                     label={t('vendorReg.bank.ifsc')}
                     placeholder={t('vendorReg.bank.ifscPh')}
