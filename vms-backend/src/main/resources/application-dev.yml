@@ -1,7 +1,3 @@
 logging:
   level:
-    # Deep email debugging (ONLY for local/dev)
-    org.springframework.mail: DEBUG
-    org.springframework.mail.javamail: DEBUG
-    jakarta.mail: DEBUG
-    com.sun.mail: DEBUG
+    com.imc.vms_backend.email: DEBUG

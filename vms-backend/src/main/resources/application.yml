@@ -8,12 +8,7 @@ logging:
     root: INFO
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
-    # Keep mail logs at INFO by default (production-safe).
-    # Enable deep mail debugging only in the `dev` profile (see application-dev.yml).
-    org.springframework.mail: INFO
-    org.springframework.mail.javamail: INFO
-    jakarta.mail: INFO
-    com.sun.mail: INFO
+    com.imc.vms_backend.email: INFO
 
 spring:
   servlet:
@@ -35,38 +30,25 @@ spring:
     name: vms-backend
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/imc_vms?stringtype=unspecified}
+    url: ${DB_URL:${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/imc_vms?stringtype=unspecified}}
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: postgres
+    username: ${DB_USERNAME:${SPRING_DATASOURCE_USERNAME:postgres}}
+    password: ${DB_PASSWORD:${SPRING_DATASOURCE_PASSWORD:postgres}}
+    hikari:
+      connection-timeout: ${DB_CONNECTION_TIMEOUT:30000}
+      maximum-pool-size: ${DB_MAX_POOL_SIZE:10}
+      minimum-idle: ${DB_MIN_IDLE:2}
 
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
     open-in-view: false
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-
-  mail:
-    # Prefer explicit MAIL_HOST in production.
-    # Default to Brevo relay for local/dev convenience.
-    host: ${MAIL_HOST:smtp-relay.brevo.com}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
-    properties:
-      mail:
-        smtp:
-          auth: ${MAIL_SMTP_AUTH:true}
-          starttls:
-            enable: ${MAIL_SMTP_STARTTLS_ENABLE:true}
-
-          # Reasonable timeouts (ms) to avoid hanging when SMTP is blocked.
-          connectiontimeout: ${MAIL_SMTP_CONNECTION_TIMEOUT_MS:5000}
-          timeout: ${MAIL_SMTP_TIMEOUT_MS:5000}
-          writetimeout: ${MAIL_SMTP_WRITE_TIMEOUT_MS:5000}
 
   mvc:
     log-request-details: true
@@ -82,8 +64,13 @@ app:
     base-url: ${FRONTEND_BASE_URL:http://localhost:5173}
 
   mail:
-    # Sender address shown to recipients. For Brevo this must be a verified sender.
+    # Sender address shown to recipients. For Brevo this must be a verified sender in your Brevo account.
     from: ${MAIL_FROM:}
+    from-name: ${MAIL_FROM_NAME:IMC Vendor Management System}
+    brevo:
+      api-key: ${BREVO_API_KEY:}
+      api-url: ${BREVO_API_URL:https://api.brevo.com/v3/smtp/email}
+      timeout-ms: ${BREVO_TIMEOUT_MS:10000}
   cors:
     # Dev-friendly default. In production set this to your exact frontend origin(s), comma-separated.
     # Example: CORS_ALLOWED_ORIGIN_PATTERNS=https://vms.example.com
